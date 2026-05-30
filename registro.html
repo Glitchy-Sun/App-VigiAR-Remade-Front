@@ -15,7 +15,7 @@
 
         <div id="step-status" class="step active">
             <div class="card">
-                <p style="margin-bottom: 16px; font-weight: 600;">Qual o status desta visita?</p>
+                <p style="margin-bottom: 16px; font-weight: 600; font-size: 1.1rem;">Qual o status desta visita?</p>
                 <div class="grid-select">
                     <div class="chip" onclick="avancar('visitada')">
                         <span class="emoji">✅</span> Aberta/Visitada
@@ -29,7 +29,7 @@
 
         <div id="step-focos" class="step">
             <div class="card">
-                <p style="margin-bottom: 16px; font-weight: 600;">🦟 Algum foco encontrado?</p>
+                <p style="margin-bottom: 16px; font-weight: 600; font-size: 1.1rem;">🦟 Algum foco encontrado?</p>
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: -10px; margin-bottom: 15px;">Selecione os focos ou clique em "Continuar" se não houver nenhum.</p>
                 
                 <div class="grid-select">
@@ -42,3 +42,126 @@
                     <div class="chip" onclick="toggleFoco(this, 'outros')"><span class="emoji">❓</span> Outros</div>
                 </div>
                 <button class="btn-primary" onclick="irParaLocalizacao()" style="margin-top: 20px;">Continuar &rarr;</button>
+            </div>
+        </div>
+
+        <div id="step-location" class="step">
+            <div class="card" style="text-align: center;">
+                <h3 style="margin-bottom: 15px;">Localização e Notas 📍</h3>
+                
+                <p id="gps-status" style="margin-bottom: 20px; font-weight: bold; color: var(--primary);">Buscando sinal de GPS...</p>
+                
+                <div id="manual-location" style="display: none; text-align: left; margin-bottom: 15px;">
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;">Insira o bairro ou rua manualmente:</p>
+                    <input type="text" id="input-manual" placeholder="Ex: Rua das Flores, Centro">
+                </div>
+
+                <div style="text-align: left; margin-top: 15px;">
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;">Observações (Opcional):</p>
+                    <textarea id="input-obs" rows="3" placeholder="Anotações da visita..." style="width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 12px; font-family: inherit; resize: vertical;"></textarea>
+                </div>
+
+                <button class="btn-primary btn-pulse" onclick="finalizarRegistro()" style="margin-top: 20px; background: var(--success);">Salvar Registro 💾</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Importação corrigida para bater exatamente com seu db.js atual
+        import { localDB } from './js/db.js';
+
+        let visita = { 
+            client_id: crypto.randomUUID(), 
+            status: null, 
+            focos: [], 
+            coordenadas: null, 
+            setor_manual: null, 
+            gps_disponivel: false,
+            observacoes: "" // Novo campo de observação
+        };
+
+        window.avancar = (status) => {
+            visita.status = status;
+            document.getElementById('step-status').classList.remove('active');
+            
+            if (status === 'visitada') {
+                // Se visitada, abre os focos
+                document.getElementById('step-focos').classList.add('active');
+            } else {
+                // Se fechada, pula direto para localização e anotações
+                document.getElementById('step-location').classList.add('active');
+                buscarGPS();
+            }
+        };
+
+        window.toggleFoco = (el, tipo) => {
+            el.classList.toggle('active');
+            if(el.classList.contains('active')) {
+                visita.focos.push(tipo);
+            } else {
+                visita.focos = visita.focos.filter(f => f !== tipo);
+            }
+        };
+
+        window.irParaLocalizacao = () => {
+            document.getElementById('step-focos').classList.remove('active');
+            document.getElementById('step-location').classList.add('active');
+            buscarGPS();
+        };
+
+        function buscarGPS() {
+            if (!navigator.geolocation) {
+                falhaGPS("Geolocalização não suportada.");
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    visita.coordenadas = [pos.coords.latitude, pos.coords.longitude];
+                    visita.gps_disponivel = true;
+                    
+                    const gpsText = document.getElementById('gps-status');
+                    gpsText.innerText = "✅ GPS Capturado com sucesso!";
+                    gpsText.style.color = "var(--success)";
+                },
+                (err) => { 
+                    falhaGPS("Sinal fraco ou permissão negada."); 
+                },
+                { timeout: 10000, enableHighAccuracy: true }
+            );
+        }
+
+        function falhaGPS(motivo) {
+            visita.gps_disponivel = false;
+            
+            const gpsText = document.getElementById('gps-status');
+            gpsText.innerText = `❌ Falha no GPS (${motivo}).`;
+            gpsText.style.color = "var(--error)";
+            
+            // Mostra o campo manual se o GPS falhar
+            document.getElementById('manual-location').style.display = 'block';
+        }
+
+        window.finalizarRegistro = async () => {
+            // Validação do Local Manual (caso GPS falhe)
+            if (!visita.gps_disponivel) {
+                const manual = document.getElementById('input-manual').value;
+                if (!manual || manual.trim() === "") {
+                    return alert("O GPS falhou. Por favor, preencha o local da visita manualmente antes de salvar.");
+                }
+                visita.setor_manual = manual.trim();
+            }
+
+            // Captura as observações inseridas
+            visita.observacoes = document.getElementById('input-obs').value.trim();
+            visita.registrado_em = new Date().toISOString();
+            
+            // Grava no banco de dados local
+            await localDB.enqueue(visita);
+            
+            alert("Registro salvo offline com sucesso! 🎉");
+            window.location.href = 'index.html';
+        };
+    </script>
+</body>
+</html>

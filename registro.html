@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Registro - VigiAr</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header style="margin-bottom: 24px;">
+            <a href="index.html" style="color: var(--text-muted); text-decoration: none; font-weight: 600;">&larr; Voltar</a>
+            <h2 style="margin-top: 10px;">Nova Visita</h2>
+        </header>
+
+        <div id="step-status" class="step active">
+            <div class="card">
+                <p style="margin-bottom: 16px; font-weight: 600;">Qual o status desta visita?</p>
+                <div class="grid-select">
+                    <div class="chip" onclick="selectStatus(this, 'visitada')">Visitada</div>
+                    <div class="chip" onclick="selectStatus(this, 'fechada')">Fechada</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="step-focos" class="step">
+            <div class="card">
+                <p style="margin-bottom: 16px; font-weight: 600;">Algum foco encontrado?</p>
+                <div class="grid-select">
+                    <div class="chip" onclick="toggleFoco(this, 'pneu')">Pneu</div>
+                    <div class="chip" onclick="toggleFoco(this, 'lixo')">Lixo</div>
+                    <div class="chip" onclick="toggleFoco(this, 'vaso')">Vaso</div>
+                    <div class="chip" onclick="toggleFoco(this, 'calha')">Calha</div>
+                </div>
+                <button class="btn-primary" onclick="finalizarRegistro()" style="margin-top: 20px;">Salvar Registro</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { localDB } from './js/db.js';
+
+        let visita = { status: null, focos: [], gps_disponivel: false };
+
+        window.selectStatus = (el, status) => {
+            document.querySelectorAll('#step-status .chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            visita.status = status;
+            
+            // Avançar
+            document.getElementById('step-status').classList.remove('active');
+            document.getElementById('step-focos').classList.add('active');
+        };
+
+        window.toggleFoco = (el, tipo) => {
+            el.classList.toggle('active');
+            if(el.classList.contains('active')) visita.focos.push(tipo);
+            else visita.focos = visita.focos.filter(f => f !== tipo);
+        };
+
+        window.finalizarRegistro = async () => {
+            if(!visita.status) return alert("Selecione um status!");
+            if(visita.focos.length === 0) return alert("Selecione ao menos um foco!");
+            // GPS Simulado (ou real)
+            visita.registrado_em = new Date().toISOString();
+            await localDB.enqueue(visita);
+            
+            alert("Registro salvo com sucesso!");
+            window.location.href = 'index.html';
+        };
+    </script>
+</body>
+</html>

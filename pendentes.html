@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendências - VigiAr</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <a href="index.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">&larr; Início</a>
+                <h2>Pendências</h2>
+            </div>
+            <button onclick="carregarLista()" style="background: none; border: none; color: var(--primary); font-weight: 600;">Atualizar</button>
+        </header>
+
+        <div id="lista-pendentes">
+            </div>
+
+        <button id="btn-sync" class="btn-primary" onclick="sincronizar()" style="margin-top: 20px;">Sincronizar com Servidor</button>
+    </div>
+
+    <script type="module">
+        import { localDB } from './js/db.js';
+        import { CONFIG } from './js/config.js';
+
+        async function carregarLista() {
+            const items = await localDB.list();
+            const container = document.getElementById('lista-pendentes');
+            
+            if (items.length === 0) {
+                container.innerHTML = `<div class="card" style="text-align: center; color: var(--text-muted);">Nenhuma pendência encontrada.</div>`;
+                return;
+            }
+
+            container.innerHTML = items.map(v => `
+                <div class="card">
+                    <div style="display:flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 700; text-transform: uppercase;">${v.status}</span>
+                        <small style="color: var(--text-muted);">${new Date(v.registrado_em).toLocaleDateString()}</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.sincronizar = async () => {
+            const btn = document.getElementById('btn-sync');
+            btn.innerText = "Sincronizando...";
+            
+            const items = await localDB.list();
+            try {
+                // Simulação de delay ou fetch real
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Limpeza após "sucesso"
+                await localDB.clear(); 
+                
+                alert("Dados sincronizados com sucesso!");
+                carregarLista();
+            } catch(e) {
+                alert("Erro na sincronização.");
+            } finally {
+                btn.innerText = "Sincronizar com Servidor";
+            }
+        };
+
+        carregarLista();
+    </script>
+</body>
+</html>

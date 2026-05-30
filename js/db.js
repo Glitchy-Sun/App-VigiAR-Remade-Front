@@ -1,14 +1,55 @@
+// db.js
 const QUEUE_KEY = "vigiar.pending.visitas";
 
-export const db = {
+/**
+ * Módulo para gerenciar a fila de visitas offline.
+ * Mantém a mesma interface do localdb.ts original.
+ */
+export const localDB = {
+    
+    // Lista todas as visitas pendentes
+    async list() {
+        const raw = localStorage.getItem(QUEUE_KEY);
+        try {
+            return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+            console.error("Erro ao ler fila local:", e);
+            return [];
+        }
+    },
+
+    // Retorna a quantidade de registros pendentes
+    async count() {
+        const queue = await this.list();
+        return queue.length;
+    },
+
     // Adiciona uma visita na fila
-    enqueue: (visita) => {
-        const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
-        queue.push({ ...visita, client_id: Date.now().toString() }); // ID simples
+    // Espera um objeto 'visita' completo (conforme a interface PendingVisita)
+    async enqueue(visita) {
+        const queue = await this.list();
+        
+        // Garante que o objeto tenha o timestamp de registro se não tiver
+        const novaVisita = {
+            ...visita,
+            registrado_em: visita.registrado_em || new Date().toISOString()
+        };
+
+        queue.push(novaVisita);
         localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
     },
-    // Lê a fila
-    list: () => JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]"),
-    // Limpa após sincronizar
-    clear: () => localStorage.removeItem(QUEUE_KEY)
+
+    // Remove apenas as visitas que o servidor confirmou o recebimento
+    // Essencial para não deletar o que ainda não foi enviado
+    async removeByClientIds(ids) {
+        let queue = await this.list();
+        // Filtra mantendo apenas o que NÃO está na lista de ids confirmados
+        queue = queue.filter(item => !ids.includes(item.client_id));
+        localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
+    },
+
+    // Limpa tudo (usar com cuidado)
+    async clear() {
+        localStorage.removeItem(QUEUE_KEY);
+    }
 };

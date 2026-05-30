@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VigiAr - Cadastro</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="auth-body">
 
@@ -17,7 +17,7 @@
             </div>
 
             <div class="input-group">
-                <input type="text" id="matricula" placeholder="Matrícula (Ex: ACE001)" required>
+                <input type="text" id="matricula" placeholder="Matrícula" required>
             </div>
             
             <div class="input-group">
@@ -27,17 +27,23 @@
             <button type="submit" class="btn-primary">Cadastrar</button>
         </form>
 
-        <div class="auth-link">
+        <div class="auth-link" style="margin-top: 15px;">
             Já possui uma conta? <a href="login.html">Faça Login</a>
         </div>
     </div>
 
-    <script>
-        document.getElementById('cadastroForm').addEventListener('submit', function(e) {
+    <script type="module">
+        import { register } from './js/auth.js'; 
+        import { login } from './js/auth.js';
+        document.getElementById('cadastroForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const dados = {
+                nome: document.getElementById('nome').value,
+                matricula: document.getElementById('matricula').value,
+                password: document.getElementById('password').value
+            };
             
-            alert("Conta criada com sucesso! Redirecionando para o login...");
-            window.location.href = 'login.html';
+            await register(dados);
         });
     </script>
 </body>

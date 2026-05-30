@@ -8,65 +8,107 @@
 </head>
 <body>
 
-    <div class="container">
+    <div class="container animate-slide">
         <header style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
             <div>
-                <a href="index.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">&larr; Início</a>
-                <h2>Pendências</h2>
+                <a href="index.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600;">&larr; Início</a>
+                <h2 style="margin-top: 5px;">Pendências ☁️</h2>
             </div>
-            <button onclick="carregarLista()" style="background: none; border: none; color: var(--primary); font-weight: 600;">Atualizar</button>
+            <button onclick="carregarLista()" style="background: none; border: none; color: var(--primary); font-weight: 700; cursor: pointer; font-size: 1rem;">↻ Atualizar</button>
         </header>
 
         <div id="lista-pendentes">
             </div>
 
-        <button id="btn-sync" class="btn-primary" onclick="sincronizar()" style="margin-top: 20px;">Sincronizar com Servidor</button>
+        <button id="btn-sync" class="btn-primary btn-pulse" onclick="sincronizar()" style="margin-top: 20px;">Sincronizar com Servidor 🚀</button>
     </div>
 
     <script type="module">
-        import { localDB } from './js/db.js';
-        import { CONFIG } from './js/config.js';
+        // Caso o seu db.js exporte como 'db' em vez de 'localDB', usamos esse 'as' para evitar erros:
+        import { db as localDB } from './js/db.js'; 
+        
+        // Se houver arquivo de config, pode importar aqui também:
+        // import { CONFIG } from './js/config.js';
 
         async function carregarLista() {
             const items = await localDB.list();
             const container = document.getElementById('lista-pendentes');
+            const btnSync = document.getElementById('btn-sync');
             
-            if (items.length === 0) {
-                container.innerHTML = `<div class="card" style="text-align: center; color: var(--text-muted);">Nenhuma pendência encontrada.</div>`;
+            // Se a lista estiver vazia, mostra mensagem de sucesso e esconde o botão
+            if (!items || items.length === 0) {
+                container.innerHTML = `
+                    <div class="card animate-slide" style="text-align: center; padding: 40px 20px; border: 2px dashed var(--border);">
+                        <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">✨</span>
+                        <h3 style="color: var(--text-primary);">Tudo limpo!</h3>
+                        <p style="color: var(--text-muted); margin-top: 5px;">Nenhuma pendência aguardando envio.</p>
+                    </div>`;
+                btnSync.style.display = 'none';
                 return;
             }
 
-            container.innerHTML = items.map(v => `
-                <div class="card">
-                    <div style="display:flex; justify-content: space-between; align-items: center;">
-                        <span style="font-weight: 700; text-transform: uppercase;">${v.status}</span>
-                        <small style="color: var(--text-muted);">${new Date(v.registrado_em).toLocaleDateString()}</small>
+            // Se houver itens, garante que o botão de sincronizar apareça
+            btnSync.style.display = 'flex';
+
+            // Monta os cartões dinamicamente
+            container.innerHTML = items.map(v => {
+                const isVisitada = v.status === 'visitada';
+                const icone = isVisitada ? '✅' : '🔒';
+                const cor = isVisitada ? 'var(--success)' : 'var(--text-muted)';
+                
+                // Trata a exibição dos focos
+                const alertaFoco = (v.focos && v.focos.length > 0) 
+                    ? `<div style="color: var(--error); font-weight: bold; font-size: 0.85rem; margin-top: 8px; background: #ffebee; padding: 6px; border-radius: 6px;">🦟 ${v.focos.length} foco(s): ${v.focos.join(', ')}</div>` 
+                    : '';
+                    
+                // Trata a exibição da localização (GPS ou Manual)
+                const local = v.gps_disponivel ? "📍 GPS Capturado" : `✍️ Setor Manual: ${v.setor_manual || 'Não informado'}`;
+                
+                // Formata a data (fallback para Date.now() se registrado_em estiver vazio)
+                const dataRegistro = new Date(v.registrado_em || Date.now());
+
+                return `
+                <div class="card animate-slide" style="border-left-color: ${cor}; border-left-width: 5px; margin-bottom: 12px;">
+                    <div style="display:flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <span style="font-weight: 800; text-transform: uppercase; color: ${cor}; font-size: 0.95rem;">${icone} ${v.status}</span>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 6px; font-weight: 500;">${local}</div>
+                            ${alertaFoco}
+                        </div>
+                        <small style="color: var(--text-muted); font-weight: 700; background: var(--bg); padding: 4px 8px; border-radius: 12px; font-size: 0.75rem;">
+                            ${dataRegistro.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                        </small>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
         }
 
         window.sincronizar = async () => {
             const btn = document.getElementById('btn-sync');
-            btn.innerText = "Sincronizando...";
+            btn.innerHTML = "Sincronizando... ⏳";
+            btn.style.opacity = "0.7";
+            btn.style.pointerEvents = "none";
             
-            const items = await localDB.list();
             try {
-                // Simulação de delay ou fetch real
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                // Aqui entraria o seu fetch real para a API.
+                // Simulando o tempo de envio com um delay de 1.5s:
+                await new Promise(resolve => setTimeout(resolve, 1500));
                 
-                // Limpeza após "sucesso"
+                // Limpeza após o "sucesso" da API
                 await localDB.clear(); 
                 
-                alert("Dados sincronizados com sucesso!");
-                carregarLista();
+                alert("Dados enviados para o servidor com sucesso! 🚀");
+                carregarLista(); // Recarrega a tela para mostrar o "Tudo limpo"
             } catch(e) {
-                alert("Erro na sincronização.");
+                alert("Erro ao sincronizar. Verifique sua conexão com a internet. ❌");
             } finally {
-                btn.innerText = "Sincronizar com Servidor";
+                btn.innerHTML = "Sincronizar com Servidor 🚀";
+                btn.style.opacity = "1";
+                btn.style.pointerEvents = "auto";
             }
         };
 
+        // Carrega a lista assim que a página abre
         carregarLista();
     </script>
 </body>

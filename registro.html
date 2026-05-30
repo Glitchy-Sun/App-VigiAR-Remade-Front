@@ -7,68 +7,38 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
-    <div class="container">
+    <div class="container animate-slide">
         <header style="margin-bottom: 24px;">
             <a href="index.html" style="color: var(--text-muted); text-decoration: none; font-weight: 600;">&larr; Voltar</a>
-            <h2 style="margin-top: 10px;">Nova Visita</h2>
+            <h2 style="margin-top: 10px;">Nova Visita 📝</h2>
         </header>
 
         <div id="step-status" class="step active">
             <div class="card">
                 <p style="margin-bottom: 16px; font-weight: 600;">Qual o status desta visita?</p>
                 <div class="grid-select">
-                    <div class="chip" onclick="selectStatus(this, 'visitada')">Visitada</div>
-                    <div class="chip" onclick="selectStatus(this, 'fechada')">Fechada</div>
+                    <div class="chip" onclick="avancar('visitada')">
+                        <span class="emoji">✅</span> Aberta/Visitada
+                    </div>
+                    <div class="chip" onclick="avancar('fechada')">
+                        <span class="emoji">🔒</span> Fechada/Recusada
+                    </div>
                 </div>
             </div>
         </div>
 
         <div id="step-focos" class="step">
             <div class="card">
-                <p style="margin-bottom: 16px; font-weight: 600;">Algum foco encontrado?</p>
+                <p style="margin-bottom: 16px; font-weight: 600;">🦟 Algum foco encontrado?</p>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: -10px; margin-bottom: 15px;">Selecione os focos ou clique em "Continuar" se não houver nenhum.</p>
+                
                 <div class="grid-select">
-                    <div class="chip" onclick="toggleFoco(this, 'pneu')">Pneu</div>
-                    <div class="chip" onclick="toggleFoco(this, 'lixo')">Lixo</div>
-                    <div class="chip" onclick="toggleFoco(this, 'vaso')">Vaso</div>
-                    <div class="chip" onclick="toggleFoco(this, 'calha')">Calha</div>
+                    <div class="chip" onclick="toggleFoco(this, 'pneu')"><span class="emoji">🛞</span> Pneu</div>
+                    <div class="chip" onclick="toggleFoco(this, 'lixo')"><span class="emoji">🗑️</span> Lixo/Entulho</div>
+                    <div class="chip" onclick="toggleFoco(this, 'vaso')"><span class="emoji">🪴</span> Vaso/Planta</div>
+                    <div class="chip" onclick="toggleFoco(this, 'calha')"><span class="emoji">🏠</span> Calha</div>
+                    <div class="chip" onclick="toggleFoco(this, 'caixa_dagua')"><span class="emoji">💧</span> Caixa d'água</div>
+                    <div class="chip" onclick="toggleFoco(this, 'piscina')"><span class="emoji">🏊</span> Piscina</div>
+                    <div class="chip" onclick="toggleFoco(this, 'outros')"><span class="emoji">❓</span> Outros</div>
                 </div>
-                <button class="btn-primary" onclick="finalizarRegistro()" style="margin-top: 20px;">Salvar Registro</button>
-            </div>
-        </div>
-    </div>
-
-    <script type="module">
-        import { localDB } from './js/db.js';
-
-        let visita = { status: null, focos: [], gps_disponivel: false };
-
-        window.selectStatus = (el, status) => {
-            document.querySelectorAll('#step-status .chip').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            visita.status = status;
-            
-            // Avançar
-            document.getElementById('step-status').classList.remove('active');
-            document.getElementById('step-focos').classList.add('active');
-        };
-
-        window.toggleFoco = (el, tipo) => {
-            el.classList.toggle('active');
-            if(el.classList.contains('active')) visita.focos.push(tipo);
-            else visita.focos = visita.focos.filter(f => f !== tipo);
-        };
-
-        window.finalizarRegistro = async () => {
-            if(!visita.status) return alert("Selecione um status!");
-            if(visita.focos.length === 0) return alert("Selecione ao menos um foco!");
-            // GPS Simulado (ou real)
-            visita.registrado_em = new Date().toISOString();
-            await localDB.enqueue(visita);
-            
-            alert("Registro salvo com sucesso!");
-            window.location.href = 'index.html';
-        };
-    </script>
-</body>
-</html>
+                <button class="btn-primary" onclick="irParaLocalizacao()" style="margin-top: 20px;">Continuar &rarr;</button>

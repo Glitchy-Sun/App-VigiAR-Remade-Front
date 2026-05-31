@@ -3,95 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novo Registro - VigiAr</title>
+    <title>Novo Registro | EcoVetor</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="container animate-slide">
-        <header style="margin-bottom: 24px;">
-            <a href="index.html" style="color: var(--text-muted); text-decoration: none; font-weight: 600;">&larr; Voltar</a>
-            <h2 style="margin-top: 10px;">Nova Visita 📝</h2>
+    <div class="container">
+        <header style="margin-bottom: 28px;">
+            <a href="index.html" style="color: var(--text-secondary); text-decoration: none; font-weight: 600; font-size: 0.9rem;">&larr; Voltar ao Painel</a>
+            <h2 style="margin-top: 12px; font-size: 1.6rem; color: var(--text-primary);">Formulário de Visita</h2>
         </header>
 
         <div id="step-status" class="step active">
             <div class="card">
-                <p style="margin-bottom: 16px; font-weight: 600; font-size: 1.1rem;">Qual o status desta visita?</p>
+                <p style="margin-bottom: 18px; font-weight: 600; color: var(--text-primary);">Selecione o status da atividade técnica:</p>
                 <div class="grid-select">
-                    <div class="chip" onclick="avancar('visitada')">
-                        <span class="emoji">✅</span> Aberta/Visitada
-                    </div>
-                    <div class="chip" onclick="avancar('fechada')">
-                        <span class="emoji">🔒</span> Fechada/Recusada
-                    </div>
+                    <div class="chip" onclick="avancar('visitada')">Imóvel Visitado</div>
+                    <div class="chip" onclick="avancar('fechada')">Imóvel Fechado / Recusado</div>
                 </div>
             </div>
         </div>
 
         <div id="step-focos" class="step">
             <div class="card">
-                <p style="margin-bottom: 16px; font-weight: 600; font-size: 1.1rem;">🦟 Algum foco encontrado?</p>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: -10px; margin-bottom: 15px;">Selecione os focos ou clique em "Continuar" se não houver nenhum.</p>
+                <p style="margin-bottom: 6px; font-weight: 600; color: var(--text-primary);">Identificação de potenciais criadouros:</p>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px;">Selecione abaixo os focos encontrados no local ou prossiga caso esteja regularizado.</p>
                 
-                <div class="grid-select">
-                    <div class="chip" onclick="toggleFoco(this, 'pneu')"><span class="emoji">🛞</span> Pneu</div>
-                    <div class="chip" onclick="toggleFoco(this, 'lixo')"><span class="emoji">🗑️</span> Lixo/Entulho</div>
-                    <div class="chip" onclick="toggleFoco(this, 'vaso')"><span class="emoji">🪴</span> Vaso/Planta</div>
-                    <div class="chip" onclick="toggleFoco(this, 'calha')"><span class="emoji">🏠</span> Calha</div>
-                    <div class="chip" onclick="toggleFoco(this, 'caixa_dagua')"><span class="emoji">💧</span> Caixa d'água</div>
-                    <div class="chip" onclick="toggleFoco(this, 'piscina')"><span class="emoji">🏊</span> Piscina</div>
-                    <div class="chip" onclick="toggleFoco(this, 'outros')"><span class="emoji">❓</span> Outros</div>
-                </div>
-                <button class="btn-primary" onclick="irParaLocalizacao()" style="margin-top: 20px;">Continuar &rarr;</button>
-            </div>
-        </div>
-
-        <div id="step-location" class="step">
-            <div class="card" style="text-align: center;">
-                <h3 style="margin-bottom: 15px;">Localização e Notas 📍</h3>
-                
-                <p id="gps-status" style="margin-bottom: 20px; font-weight: bold; color: var(--primary);">Buscando sinal de GPS...</p>
-                
-                <div id="manual-location" style="display: none; text-align: left; margin-bottom: 15px;">
-                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;">Insira o bairro ou rua manualmente:</p>
-                    <input type="text" id="input-manual" placeholder="Ex: Rua das Flores, Centro">
+                <div class="grid-select" style="margin-bottom: 20px;">
+                    <div class="chip" onclick="toggleFoco(this, 'pneu')">Pneu</div>
+                    <div class="chip" onclick="toggleFoco(this, 'lixo')">Lixo / Entulho</div>
+                    <div class="chip" onclick="toggleFoco(this, 'vaso')">Vaso / Planta</div>
+                    <div class="chip" onclick="toggleFoco(this, 'calha')">Calha Predial</div>
+                    <div class="chip" onclick="toggleFoco(this, 'caixa_dagua')">Caixa d'Água</div>
+                    <div class="chip" onclick="toggleFoco(this, 'piscina')">Piscina</div>
                 </div>
 
-                <div style="text-align: left; margin-top: 15px;">
-                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;">Observações (Opcional):</p>
-                    <textarea id="input-obs" rows="3" placeholder="Anotações da visita..." style="width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 12px; font-family: inherit; resize: vertical;"></textarea>
+                <div style="margin-top: 20px;">
+                    <label style="display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">Observações Técnicas</label>
+                    <textarea id="input-obs" placeholder="Insira notas adicionais sobre a vistoria..." style="width: 100%; min-height: 90px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; color: var(--text-primary); font-size: 0.95rem; resize: vertical;"></textarea>
                 </div>
 
-                <button class="btn-primary btn-pulse" onclick="finalizarRegistro()" style="margin-top: 20px; background: var(--success);">Salvar Registro 💾</button>
+                <div id="gps-status" style="margin-top: 15px; font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;">
+                    Buscando coordenadas de geolocalização...
+                </div>
+
+                <div id="manual-location" style="display: none; margin-top: 15px;">
+                    <label style="display: block; font-size: 0.9rem; margin-bottom: 6px;">Identificação do Setor (Manual)</label>
+                    <input type="text" id="input-manual" placeholder="Ex: Setor 04, Bloco B" style="width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px; color: var(--text-primary);">
+                </div>
+
+                <button class="btn-primary" onclick="finalizarRegistro()" style="margin-top: 24px;">Salvar Relatório de Visita</button>
             </div>
         </div>
     </div>
 
     <script type="module">
-        // Importação corrigida para bater exatamente com seu db.js atual
         import { localDB } from './js/db.js';
 
-        let visita = { 
-            client_id: crypto.randomUUID(), 
-            status: null, 
-            focos: [], 
-            coordenadas: null, 
-            setor_manual: null, 
-            gps_disponivel: false,
-            observacoes: "" // Novo campo de observação
-        };
+        let visita = { status: null, focos: [], gps_disponivel: false };
 
         window.avancar = (status) => {
             visita.status = status;
             document.getElementById('step-status').classList.remove('active');
-            
-            if (status === 'visitada') {
-                // Se visitada, abre os focos
-                document.getElementById('step-focos').classList.add('active');
-            } else {
-                // Se fechada, pula direto para localização e anotações
-                document.getElementById('step-location').classList.add('active');
-                buscarGPS();
-            }
+            document.getElementById('step-focos').classList.add('active');
+            coletarCoordenadas();
         };
 
         window.toggleFoco = (el, tipo) => {
@@ -103,63 +77,42 @@
             }
         };
 
-        window.irParaLocalizacao = () => {
-            document.getElementById('step-focos').classList.remove('active');
-            document.getElementById('step-location').classList.add('active');
-            buscarGPS();
-        };
-
-        function buscarGPS() {
-            if (!navigator.geolocation) {
-                falhaGPS("Geolocalização não suportada.");
-                return;
-            }
-
+        function coletarCoordenadas() {
+            if(!navigator.geolocation) { return falhaGPS("Não suportado"); }
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
-                    visita.coordenadas = [pos.coords.latitude, pos.coords.longitude];
+                    visita.coordenadas = [pos.coords.longitude, pos.coords.latitude];
                     visita.gps_disponivel = true;
-                    
-                    const gpsText = document.getElementById('gps-status');
-                    gpsText.innerText = "✅ GPS Capturado com sucesso!";
-                    gpsText.style.color = "var(--success)";
+                    document.getElementById('gps-status').innerText = "Coordenadas GPS consolidadas com sucesso.";
+                    document.getElementById('gps-status').style.color = "var(--success)";
                 },
-                (err) => { 
-                    falhaGPS("Sinal fraco ou permissão negada."); 
-                },
+                () => { falhaGPS("Sinal indisponível"); },
                 { timeout: 10000, enableHighAccuracy: true }
             );
         }
 
         function falhaGPS(motivo) {
             visita.gps_disponivel = false;
-            
             const gpsText = document.getElementById('gps-status');
-            gpsText.innerText = `❌ Falha no GPS (${motivo}).`;
+            gpsText.innerText = `Aviso: Geolocalização automática indisponível (${motivo}).`;
             gpsText.style.color = "var(--error)";
-            
-            // Mostra o campo manual se o GPS falhar
             document.getElementById('manual-location').style.display = 'block';
         }
 
         window.finalizarRegistro = async () => {
-            // Validação do Local Manual (caso GPS falhe)
             if (!visita.gps_disponivel) {
                 const manual = document.getElementById('input-manual').value;
                 if (!manual || manual.trim() === "") {
-                    return alert("O GPS falhou. Por favor, preencha o local da visita manualmente antes de salvar.");
+                    return alert("Geolocalização pendente. Por favor, insira a identificação do setor manualmente.");
                 }
                 visita.setor_manual = manual.trim();
             }
 
-            // Captura as observações inseridas
             visita.observacoes = document.getElementById('input-obs').value.trim();
             visita.registrado_em = new Date().toISOString();
             
-            // Grava no banco de dados local
             await localDB.enqueue(visita);
-            
-            alert("Registro salvo offline com sucesso! 🎉");
+            alert("Registro armazenado localmente com sucesso.");
             window.location.href = 'index.html';
         };
     </script>

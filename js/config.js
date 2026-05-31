@@ -1,6 +1,4 @@
-// js/config.js
 export const CONFIG = {
-    // Substitua pela URL da sua API
-    API_URL: "https://sua-api-aqui.com", 
+    API_URL: "http://localhost:8000", 
     VERSION: "1.0.0"
 };

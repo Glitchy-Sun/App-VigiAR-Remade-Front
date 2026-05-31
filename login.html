@@ -3,40 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VigiAr - Login</title>
+    <title>EcoVetor - Login</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="auth-body">
+<body>
 
-    <div class="login-container">
-        <h1 class="logo-title">VigiAr</h1>
+    <div class="container animate-slide" style="padding-top: 60px;">
+        <header style="text-align: center; margin-bottom: 32px;">
+            <h1 style="font-size: 2.5rem; color: var(--primary); font-weight: 800; letter-spacing: -1px;">EcoVetor 🦟</h1>
+            <p style="color: var(--text-secondary); margin-top: 4px;">Sistema de Monitoramento de Endemias</p>
+        </header>
         
-        <form id="loginForm">
-            <div class="input-group">
-                <input type="text" id="matricula" placeholder="Matrícula" required>
-            </div>
+        <div class="card" style="padding: 24px;">
+            <p style="margin-bottom: 20px; font-weight: 600; font-size: 1.1rem; text-align: center; color: var(--text-primary);">
+                Acesse sua Conta
+            </p>
             
-            <div class="input-group">
-                <input type="password" id="password" placeholder="Senha" required>
-            </div>
-            
-            <button type="submit" class="btn-primary">Entrar</button>
-        </form>
+            <form id="loginForm">
+                <div class="input-group" style="margin-bottom: 16px;">
+                    <input type="text" id="matricula" placeholder="Matrícula" required>
+                </div>
+                
+                <div class="input-group" style="margin-bottom: 24px;">
+                    <input type="password" id="password" placeholder="Senha" required>
+                </div>
+                
+                <button type="submit" class="btn-primary btn-pulse">Entrar no Painel 🚀</button>
+            </form>
+        </div>
 
-        <div class="auth-link" style="margin-top: 15px;">
-            Não possui acesso? <a href="cadastro.html">Cadastre-se</a>
+        <div style="text-align: center; margin-top: 24px; font-size: 0.95rem;">
+            <span style="color: var(--text-secondary);">Não possui acesso?</span> 
+            <a href="cadastro.html" style="color: var(--primary); font-weight: 700; text-decoration: none; margin-left: 4px;">Cadastre-se</a>
         </div>
     </div>
 
     <script type="module">
-        import { login } from './js/auth.js'; // Ajuste o caminho se seu auth.js estiver em outra pasta
+        import { login } from './js/auth.js';
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const matricula = document.getElementById('matricula').value;
             const password = document.getElementById('password').value;
-            
-            // Chama a função real de login
             await login(matricula, password);
         });
     </script>

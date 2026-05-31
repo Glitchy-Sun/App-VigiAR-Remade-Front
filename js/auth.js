@@ -1,6 +1,6 @@
 import { CONFIG } from './config.js';
 
-const USER_KEY = "vigiar.user";
+const USER_KEY = "ecovetor.user";
 
 // Função para fazer login
 export async function login(matricula, password) {

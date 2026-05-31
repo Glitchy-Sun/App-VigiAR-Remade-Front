@@ -3,64 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | VigiAr</title>
-    
+    <title>Painel de Controle | EcoVetor</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="css/style.css">
-
     <style>
-        /* Ajuste fino para o mapa dentro do card */
-        #map { height: 350px; width: 100%; }
+        #map { height: 400px; width: 100%; border-radius: var(--radius); }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
-        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-            <h1 style="font-size: 1.2rem; color: var(--primary); font-weight: 800;">VigiAr 🦟</h1>
-            <a href="login.html" onclick="localStorage.removeItem('vigiar.user')" style="font-size: 0.9rem; color: var(--text-muted);">Sair</a>
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0;">
+            <h1 style="font-size: 1.3rem; color: var(--primary); font-weight: 700; letter-spacing: 0.5px;">VigiAr</h1>
+            <a href="login.html" onclick="localStorage.removeItem('vigiar.user')" style="font-size: 0.9rem; color: var(--text-secondary); text-decoration: none; font-weight: 500;">Sair do Sistema</a>
         </div>
     </nav>
 
-    <div class="container animate-slide" style="padding-top: 20px;">
-        
-        <header style="margin-bottom: 24px;">
-            <h2 style="font-size: 1.5rem;">Olá, Agente! 🦸‍♂️</h2>
-            <p style="color: var(--text-muted);">Bem-vindo ao painel de monitoramento.</p>
+    <div class="container">
+        <header style="margin-bottom: 28px;">
+            <h2 style="font-size: 1.6rem; font-weight: 600; color: var(--text-primary);">Olá, Agente</h2>
+            <p style="color: var(--text-secondary); font-size: 0.95rem;">Bem-vindo ao painel técnico de monitoramento epidemiológico.</p>
         </header>
 
-        <div class="grid-select" style="margin-bottom: 24px;">
-            <a href="registro.html" class="btn-primary btn-pulse" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1.1rem;">
-                📍 + Nova Visita
+        <div class="grid-select" style="margin-bottom: 28px; grid-template-columns: 1fr 1fr;">
+            <a href="registro.html" class="btn-primary" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                Iniciar Nova Visita
             </a>
-            <a href="pendentes.html" class="chip" style="text-decoration: none; padding: 16px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-direction: row; gap: 8px;">
-                <span class="emoji">📁</span> Pendências
+            <a href="pendentes.html" class="chip" style="text-decoration: none; margin: 0; font-weight: 600;">
+                Consultar Pendências
             </a>
         </div>
 
-        <div class="card" style="padding: 0; overflow: hidden; border: none;">
+        <div class="card" style="padding: 0; overflow: hidden;">
             <div id="map"></div>
         </div>
-
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Verificação de Autenticação
-        if (!localStorage.getItem('vigiar.user')) {
-            window.location.href = 'login.html';
-        }
-
-        // Inicialização do Mapa
+        if (!localStorage.getItem('vigiar.user')) { window.location.href = 'login.html'; }
         const map = L.map('map').setView([-8.0584, -34.8848], 13);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
-
-        L.marker([-8.0584, -34.8848]).addTo(map)
-            .bindPopup('Ponto de monitoramento ativo.')
-            .openPopup();
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        L.marker([-8.0584, -34.8848]).addTo(map).bindPopup('Ponto de monitoramento ativo.').openPopup();
     </script>
 </body>
 </html>

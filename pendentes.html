@@ -3,81 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pendências - VigiAr</title>
+    <title>Pendências de Sincronização | EcoVetor</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <div class="container animate-slide">
-        <header style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+    <div class="container">
+        <header style="margin-bottom: 28px; display: flex; justify-content: space-between; align-items: center;">
             <div>
-                <a href="index.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600;">&larr; Início</a>
-                <h2 style="margin-top: 5px;">Pendências ☁️</h2>
+                <a href="index.html" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; font-weight: 600;">&larr; Voltar ao Início</a>
+                <h2 style="margin-top: 6px; font-size: 1.6rem; color: var(--text-primary);">Registros Pendentes</h2>
             </div>
-            <button onclick="carregarLista()" style="background: none; border: none; color: var(--primary); font-weight: 700; cursor: pointer; font-size: 1rem;">↻ Atualizar</button>
+            <button onclick="carregarLista()" style="background: none; border: none; color: var(--primary); font-weight: 700; cursor: pointer; font-size: 0.95rem;">Atualizar Lista</button>
         </header>
 
-        <div id="lista-pendentes">
-            </div>
+        <div id="lista-pendentes"></div>
 
-        <button id="btn-sync" class="btn-primary btn-pulse" onclick="sincronizar()" style="margin-top: 20px;">Sincronizar com Servidor 🚀</button>
+        <button id="btn-sync" class="btn-primary" onclick="sincronizar()" style="margin-top: 24px;">Sincronizar com Servidor</button>
     </div>
 
     <script type="module">
-        // Caso o seu db.js exporte como 'db' em vez de 'localDB', usamos esse 'as' para evitar erros:
-        import { db as localDB } from './js/db.js'; 
-        
-        // Se houver arquivo de config, pode importar aqui também:
-        // import { CONFIG } from './js/config.js';
+        import { localDB } from './js/db.js';
 
         async function carregarLista() {
             const items = await localDB.list();
             const container = document.getElementById('lista-pendentes');
-            const btnSync = document.getElementById('btn-sync');
             
-            // Se a lista estiver vazia, mostra mensagem de sucesso e esconde o botão
-            if (!items || items.length === 0) {
-                container.innerHTML = `
-                    <div class="card animate-slide" style="text-align: center; padding: 40px 20px; border: 2px dashed var(--border);">
-                        <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">✨</span>
-                        <h3 style="color: var(--text-primary);">Tudo limpo!</h3>
-                        <p style="color: var(--text-muted); margin-top: 5px;">Nenhuma pendência aguardando envio.</p>
-                    </div>`;
-                btnSync.style.display = 'none';
+            if(items.length === 0) {
+                container.innerHTML = `<div class="card" style="text-align: center; color: var(--text-secondary);">Nenhum registro pendente de envio.</div>`;
                 return;
             }
 
-            // Se houver itens, garante que o botão de sincronizar apareça
-            btnSync.style.display = 'flex';
-
-            // Monta os cartões dinamicamente
             container.innerHTML = items.map(v => {
-                const isVisitada = v.status === 'visitada';
-                const icone = isVisitada ? '✅' : '🔒';
-                const cor = isVisitada ? 'var(--success)' : 'var(--text-muted)';
-                
-                // Trata a exibição dos focos
-                const alertaFoco = (v.focos && v.focos.length > 0) 
-                    ? `<div style="color: var(--error); font-weight: bold; font-size: 0.85rem; margin-top: 8px; background: #ffebee; padding: 6px; border-radius: 6px;">🦟 ${v.focos.length} foco(s): ${v.focos.join(', ')}</div>` 
-                    : '';
-                    
-                // Trata a exibição da localização (GPS ou Manual)
-                const local = v.gps_disponivel ? "📍 GPS Capturado" : `✍️ Setor Manual: ${v.setor_manual || 'Não informado'}`;
-                
-                // Formata a data (fallback para Date.now() se registrado_em estiver vazio)
-                const dataRegistro = new Date(v.registrado_em || Date.now());
-
+                const dataRegistro = new Date(v.registrado_em);
                 return `
-                <div class="card animate-slide" style="border-left-color: ${cor}; border-left-width: 5px; margin-bottom: 12px;">
-                    <div style="display:flex; justify-content: space-between; align-items: flex-start;">
-                        <div style="flex: 1;">
-                            <span style="font-weight: 800; text-transform: uppercase; color: ${cor}; font-size: 0.95rem;">${icone} ${v.status}</span>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 6px; font-weight: 500;">${local}</div>
-                            ${alertaFoco}
-                        </div>
-                        <small style="color: var(--text-muted); font-weight: 700; background: var(--bg); padding: 4px 8px; border-radius: 12px; font-size: 0.75rem;">
-                            ${dataRegistro.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                        </small>
+                <div class="card" style="padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="font-weight: 700; font-size: 0.95rem; text-transform: uppercase; color: var(--text-primary);">${v.status}</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <small style="color: var(--text-secondary); display: block;">${dataRegistro.toLocaleDateString()}</small>
+                        <small style="color: var(--text-muted); font-size: 0.8rem;">${dataRegistro.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</small>
                     </div>
                 </div>`;
             }).join('');
@@ -85,30 +51,26 @@
 
         window.sincronizar = async () => {
             const btn = document.getElementById('btn-sync');
-            btn.innerHTML = "Sincronizando... ⏳";
+            btn.innerHTML = "Processando Sincronização...";
             btn.style.opacity = "0.7";
             btn.style.pointerEvents = "none";
             
             try {
-                // Aqui entraria o seu fetch real para a API.
-                // Simulando o tempo de envio com um delay de 1.5s:
+                // Simulação da chamada de API
                 await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                // Limpeza após o "sucesso" da API
                 await localDB.clear(); 
                 
-                alert("Dados enviados para o servidor com sucesso! 🚀");
-                carregarLista(); // Recarrega a tela para mostrar o "Tudo limpo"
+                alert("Sincronização realizada com sucesso.");
+                carregarLista();
             } catch(e) {
-                alert("Erro ao sincronizar. Verifique sua conexão com a internet. ❌");
+                alert("Falha de conexão. Verifique os parâmetros de rede e tente novamente.");
             } finally {
-                btn.innerHTML = "Sincronizar com Servidor 🚀";
+                btn.innerHTML = "Sincronizar com Servidor";
                 btn.style.opacity = "1";
                 btn.style.pointerEvents = "auto";
             }
         };
 
-        // Carrega a lista assim que a página abre
         carregarLista();
     </script>
 </body>

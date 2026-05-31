@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 1. Verificação de Autenticação
     // Se não houver utilizador logado, manda para o login (exceto se já estiver na página de login)
-    const user = localStorage.getItem('vigiar.user');
+    const user = localStorage.getItem('ecovetor.user');
     if (!user && !window.location.pathname.includes('login.html')) {
         window.location.href = 'login.html';
         return;

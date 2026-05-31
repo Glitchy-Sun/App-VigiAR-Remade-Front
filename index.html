@@ -3,48 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Controle | EcoVetor</title>
+    <title>Dashboard | EcoVetor</title>
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
     <link rel="stylesheet" href="css/style.css">
+
     <style>
-        #map { height: 400px; width: 100%; border-radius: var(--radius); }
+        /* Ajuste do mapa para o novo layout */
+        #map { height: 350px; width: 100%; border-radius: 0 0 var(--radius) var(--radius); }
     </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0;">
-            <h1 style="font-size: 1.3rem; color: var(--primary); font-weight: 700; letter-spacing: 0.5px;">EcoVetor</h1>
-            <a href="login.html" onclick="localStorage.removeItem('vigiar.user')" style="font-size: 0.9rem; color: var(--text-secondary); text-decoration: none; font-weight: 500;">Sair do Sistema</a>
-        </div>
-    </nav>
+    <div class="app-layout">
+        
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <i class="ph-fill ph-mosquito" style="font-size: 1.8rem; color: var(--primary);"></i>
+                VigiAr
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="active"><i class="ph ph-squares-four"></i> Dashboard</a>
+                <a href="registro.html"><i class="ph ph-plus-circle"></i> Nova Visita</a>
+                <a href="pendentes.html"><i class="ph ph-cloud-arrow-up"></i> Pendências</a>
+                <a href="#"><i class="ph ph-map-pin"></i> Mapa</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="login.html" onclick="localStorage.removeItem('vigiar.user')">
+                    <i class="ph ph-sign-out"></i> Sair
+                </a>
+            </div>
+        </aside>
 
-    <div class="container">
-        <header style="margin-bottom: 28px;">
-            <h2 style="font-size: 1.6rem; font-weight: 600; color: var(--text-primary);">Olá, Agente</h2>
-            <p style="color: var(--text-secondary); font-size: 0.95rem;">Bem-vindo ao painel técnico de monitoramento epidemiológico.</p>
-        </header>
+        <main class="main-content">
+            
+            <header class="top-header">
+                <h2 style="font-size: 1.5rem; font-weight: 700;">Dashboard</h2>
+                
+                <div class="user-profile">
+                    <div class="user-info">
+                        <strong id="user-name">João Agente</strong>
+                        <span>Agente de Endemias</span>
+                    </div>
+                    <img src="https://ui-avatars.com/api/?name=João+Agente&background=007AFF&color=fff" alt="Perfil" class="avatar" id="user-avatar">
+                    <button class="icon-btn" title="Configurações da Conta"><i class="ph ph-gear"></i></button>
+                </div>
+            </header>
 
-        <div class="grid-select" style="margin-bottom: 28px; grid-template-columns: 1fr 1fr;">
-            <a href="registro.html" class="btn-primary" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">
-                Iniciar Nova Visita
-            </a>
-            <a href="pendentes.html" class="chip" style="text-decoration: none; margin: 0; font-weight: 600;">
-                Consultar Pendências
-            </a>
-        </div>
+            <div class="dashboard-body animate-slide">
+                
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon info"><i class="ph ph-house-line"></i></div>
+                        <div class="stat-info">
+                            <h3>12</h3>
+                            <p>Visitas Hoje</p>
+                        </div>
+                    </div>
 
-        <div class="card" style="padding: 0; overflow: hidden;">
-            <div id="map"></div>
-        </div>
+                    <div class="stat-card warning" onclick="window.location.href='pendentes.html'" style="cursor: pointer;" title="Clique para sincronizar">
+                        <div class="stat-icon alert"><i class="ph ph-arrows-clockwise"></i></div>
+                        <div class="stat-info">
+                            <h3 id="contador-pendencias">3</h3>
+                            <p>Sincronização Pendente</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card danger">
+                        <div class="stat-icon error"><i class="ph ph-bug"></i></div>
+                        <div class="stat-info">
+                            <h3>5</h3>
+                            <p>Focos Encontrados</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    
+                    <div class="grid-left">
+                        <div class="card" style="margin-bottom: 20px;">
+                            <h3 style="margin-bottom: 15px; font-size: 1.1rem;">Ações Rápidas</h3>
+                            <a href="registro.html" class="btn-primary btn-pulse" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                <i class="ph ph-map-pin-line" style="font-size: 1.2rem;"></i> Iniciar Nova Visita
+                            </a>
+                        </div>
+
+                        <div class="card">
+                            <h3 style="margin-bottom: 15px; font-size: 1.1rem;">Últimas Visitas</h3>
+                            <ul class="recent-list">
+                                <li>
+                                    <span>Rua das Flores, 123</span>
+                                    <span class="badge closed">Fechada</span>
+                                </li>
+                                <li>
+                                    <span>Av. Principal, 45</span>
+                                    <span class="badge visited">Visitada</span>
+                                </li>
+                                <li>
+                                    <span>Rua do Sol, 89</span>
+                                    <span class="badge visited">Visitada</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="grid-right">
+                        <div class="card" style="padding: 0; display: flex; flex-direction: column; height: 100%; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                            <div style="padding: 15px 20px; border-bottom: 1px solid var(--border);">
+                                <h3 style="margin: 0; font-size: 1.1rem;">Mapa de Calor de Focos</h3>
+                            </div>
+                            <div id="map"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        if (!localStorage.getItem('vigiar.user')) { window.location.href = 'login.html'; }
+        // Verificação de Autenticação
+        const userRaw = localStorage.getItem('vigiar.user');
+        if (!userRaw) {
+            window.location.href = 'login.html';
+        } else {
+            try {
+                // Tenta puxar o nome do usuário do localStorage para atualizar a UI
+                const user = JSON.parse(userRaw);
+                if(user.nome) {
+                    document.getElementById('user-name').innerText = user.nome;
+                    document.getElementById('user-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nome)}&background=007AFF&color=fff`;
+                }
+            } catch(e) {}
+        }
+
+        // Inicialização do Mapa
         const map = L.map('map').setView([-8.0584, -34.8848], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-        L.marker([-8.0584, -34.8848]).addTo(map).bindPopup('Ponto de monitoramento ativo.').openPopup();
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Marcador de Exemplo
+        L.marker([-8.0584, -34.8848]).addTo(map)
+            .bindPopup('Ponto de monitoramento.')
+            .openPopup();
     </script>
 </body>
 </html>

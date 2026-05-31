@@ -8,32 +8,37 @@
 </head>
 <body>
 
-    <div class="container animate-slide" style="padding-top: 40px;">
-        <header style="margin-bottom: 24px;">
-            <a href="login.html" style="color: var(--text-secondary); text-decoration: none; font-weight: 600; font-size: 0.95rem;">&larr; Voltar para o Login</a>
-            <h2 style="margin-top: 10px; font-size: 1.6rem; font-weight: 700;">Criar Conta</h2>
+    <div class="container animate-slide" style="padding-top: 60px;">
+        <header style="text-align: center; margin-bottom: 32px;">
+            <h1 style="font-size: 2.5rem; color: #03dd69; font-weight: 800; letter-spacing: -1px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">EcoVetor 🦟</h1>
+            <p style="color: #ffffff; margin-top: 4px; font-weight: 500;">Cadastro de Agentes</p>
         </header>
         
         <div class="card" style="padding: 24px;">
-            <p style="margin-bottom: 20px; font-weight: 600; font-size: 1.1rem; color: var(--text-primary);">
-                Preencha as suas informações
+            <p style="margin-bottom: 20px; font-weight: 600; font-size: 1.1rem; text-align: center; color: var(--text-primary);">
+                Preencha suas informações
             </p>
             
             <form id="cadastroForm">
                 <div class="input-group" style="margin-bottom: 16px;">
-                    <input type="text" id="nome" placeholder="Nome Completo" required>
+                    <input type="text" id="nome" placeholder="Nome Completo" required style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
                 </div>
 
                 <div class="input-group" style="margin-bottom: 16px;">
-                    <input type="text" id="matricula" placeholder="Matrícula" required>
+                    <input type="text" id="matricula" placeholder="Matrícula" required style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
                 </div>
                 
                 <div class="input-group" style="margin-bottom: 24px;">
-                    <input type="password" id="password" placeholder="Crie uma senha" required>
+                    <input type="password" id="password" placeholder="Crie uma senha" required style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
                 </div>
                 
-                <button type="submit" class="btn-primary btn-pulse">Finalizar Cadastro</button>
+                <button type="submit" class="btn-primary btn-pulse" style="width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Finalizar Cadastro</button>
             </form>
+        </div>
+
+        <div style="text-align: center; margin-top: 24px; font-size: 0.95rem;">
+            <a href="login.html" style="color: #ffffff; font-weight: 600; text-decoration: none;">&larr; Voltar para o Login</a>
+            
         </div>
     </div>
 

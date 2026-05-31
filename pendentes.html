@@ -3,74 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pendências de Sincronização | EcoVetor</title>
+    <title>Registros Pendentes | EcoVetor</title>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="pendentes-dark-theme">
 
-    <div class="container">
-        <header style="margin-bottom: 28px; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <a href="index.html" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; font-weight: 600;">&larr; Voltar ao Início</a>
-                <h2 style="margin-top: 6px; font-size: 1.6rem; color: var(--text-primary);">Registros Pendentes</h2>
-            </div>
-            <button onclick="carregarLista()" style="background: none; border: none; color: var(--primary); font-weight: 700; cursor: pointer; font-size: 0.95rem;">Atualizar Lista</button>
+    <div class="sync-wrapper animate-slide">
+        
+        <!-- Cabeçalho -->
+        <header class="sync-header">
+            <a href="index.html" class="back-link"><i class="ph ph-arrow-left"></i> Voltar ao Início</a>
+            <button onclick="carregarLista()" class="refresh-btn">Atualizar Lista</button>
         </header>
+        
+        <h2 class="sync-title">Registros Pendentes</h2>
 
-        <div id="lista-pendentes"></div>
+        <!-- Tabela -->
+        <div class="table-card">
+            <div class="table-responsive">
+                <table class="sync-table">
+                    <thead>
+                        <tr>
+                            <th>DATA</th>
+                            <th>HORA</th>
+                            <th>LOCALIZAÇÃO</th>
+                            <th>INDÍCIOS DE DENGUE</th>
+                            <th>STATUS</th>
+                            <th>AÇÕES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-pendentes">
+                        <!-- O JavaScript preencherá as linhas aqui -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Rodapé com Botão -->
+            <div class="sync-footer">
+                <button id="btn-sync" class="btn-sync-server" onclick="sincronizar()">Sincronizar com Servidor</button>
+            </div>
+        </div>
 
-        <button id="btn-sync" class="btn-primary" onclick="sincronizar()" style="margin-top: 24px;">Sincronizar com Servidor</button>
     </div>
 
     <script type="module">
         import { localDB } from './js/db.js';
 
-        async function carregarLista() {
-            const items = await localDB.list();
+        window.carregarLista = async () => {
+            let items = await localDB.list();
             const container = document.getElementById('lista-pendentes');
             
+            // Gerador de dados fictícios caso o banco esteja vazio (Para visualização do Layout)
             if(items.length === 0) {
-                container.innerHTML = `<div class="card" style="text-align: center; color: var(--text-secondary);">Nenhum registro pendente de envio.</div>`;
-                return;
+                items = [
+                    { registrado_em: new Date().toISOString(), endereco: "R. das Flores, 50", status: "VISITADA", quantidade_indicios: 0 },
+                    { registrado_em: new Date(Date.now() - 3600000).toISOString(), endereco: "Av. Principal, 120", status: "FECHADA", quantidade_indicios: 0 },
+                    { registrado_em: new Date(Date.now() - 7200000).toISOString(), endereco: "R. do Sol, 15", status: "VISITADA", quantidade_indicios: 3 },
+                    { registrado_em: new Date(Date.now() - 86400000).toISOString(), endereco: "Av. Caxangá, 210", status: "FECHADA", quantidade_indicios: 0 }
+                ];
             }
 
             container.innerHTML = items.map(v => {
                 const dataRegistro = new Date(v.registrado_em);
+                const dataFormatada = dataRegistro.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit', year: 'numeric'});
+                const horaFormatada = dataRegistro.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+                const endereco = v.endereco || "Localização GPS";
+                
+                // Lógica da coluna "Indícios de Dengue" (Substituindo o Tipo de Vetor)
+                let indiciosHtml = "";
+                if (v.status && v.status.toUpperCase() === "FECHADA") {
+                    indiciosHtml = `<span class="badge-house-closed"><i class="ph ph-door-bold"></i> Residência Fechada</span>`;
+                } else {
+                    const qtd = v.quantidade_indicios || 0;
+                    if (qtd === 0) {
+                        indiciosHtml = `<span style="color: #94a3b8;"><i class="ph ph-check-circle" style="color: #10b981;"></i> Nenhum indício</span>`;
+                    } else {
+                        indiciosHtml = `<span style="color: #fca5a5; font-weight: 600;"><i class="ph ph-warning-circle"></i> ${qtd} indício(s) encontrado(s)</span>`;
+                    }
+                }
+
                 return `
-                <div class="card" style="padding: 16px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <span style="font-weight: 700; font-size: 0.95rem; text-transform: uppercase; color: var(--text-primary);">${v.status}</span>
-                    </div>
-                    <div style="text-align: right;">
-                        <small style="color: var(--text-secondary); display: block;">${dataRegistro.toLocaleDateString()}</small>
-                        <small style="color: var(--text-muted); font-size: 0.8rem;">${dataRegistro.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</small>
-                    </div>
-                </div>`;
+                <tr>
+                    <td>${dataFormatada}</td>
+                    <td>${horaFormatada}</td>
+                    <td>${endereco} <i class="ph ph-map-pin" style="color: #64748b; margin-left: 4px;"></i></td>
+                    <td>${indiciosHtml}</td>
+                    <td><span class="status-waiting"><i class="ph ph-clock"></i> Aguardando Sinc.</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-icon view" title="Visualizar"><i class="ph ph-magnifying-glass"></i></button>
+                            <button class="btn-icon delete" title="Excluir"><i class="ph ph-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>`;
             }).join('');
         }
 
         window.sincronizar = async () => {
             const btn = document.getElementById('btn-sync');
             btn.innerHTML = "Processando Sincronização...";
-            btn.style.opacity = "0.7";
-            btn.style.pointerEvents = "none";
+            btn.classList.add("processing");
             
             try {
-                // Simulação da chamada de API
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                // Simulação do tempo de envio da API
+                await new Promise(resolve => setTimeout(resolve, 2000));
                 await localDB.clear(); 
                 
-                alert("Sincronização realizada com sucesso.");
-                carregarLista();
+                alert("Sincronização realizada com sucesso!");
+                document.getElementById('lista-pendentes').innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94a3b8; padding: 40px;">Nenhum registro pendente.</td></tr>`;
             } catch(e) {
-                alert("Falha de conexão. Verifique os parâmetros de rede e tente novamente.");
+                alert("Falha de conexão. Verifique sua rede.");
             } finally {
                 btn.innerHTML = "Sincronizar com Servidor";
-                btn.style.opacity = "1";
-                btn.style.pointerEvents = "auto";
+                btn.classList.remove("processing");
             }
         };
 
+        // Inicia a lista ao abrir a página
         carregarLista();
     </script>
 </body>

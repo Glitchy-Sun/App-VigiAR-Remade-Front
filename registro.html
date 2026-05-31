@@ -15,43 +15,73 @@
 
         <div id="step-status" class="step active">
             <div class="card">
-                <p style="margin-bottom: 18px; font-weight: 600; color: var(--text-primary);">Selecione o status da atividade técnica:</p>
+                <p style="font-weight: 600; color: var(--text-primary); font-size: 1.1rem;">Selecione o status da atividade técnica:</p>
                 <div class="grid-select">
-                    <div class="chip" onclick="avancar('visitada')">Imóvel Visitado</div>
-                    <div class="chip" onclick="avancar('fechada')">Imóvel Fechado / Recusado</div>
+                    <div class="chip" onclick="avancarStatus(this, 'visitada')">
+                        <span style="font-size: 2rem;">✅</span>
+                        Imóvel Visitado
+                    </div>
+                    <div class="chip" onclick="avancarStatus(this, 'fechada')">
+                        <span style="font-size: 2rem;">🔒</span>
+                        Imóvel Fechado
+                    </div>
                 </div>
             </div>
         </div>
 
         <div id="step-focos" class="step">
             <div class="card">
-                <p style="margin-bottom: 6px; font-weight: 600; color: var(--text-primary);">Identificação de potenciais criadouros:</p>
-                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px;">Selecione abaixo os focos encontrados no local ou prossiga caso esteja regularizado.</p>
+                <p style="font-weight: 600; font-size: 1.1rem;">🦟 Focos Encontrados</p>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px;">Selecione os focos abaixo. Se não houver, apenas continue.</p>
                 
-                <div class="grid-select" style="margin-bottom: 20px;">
-                    <div class="chip" onclick="toggleFoco(this, 'pneu')">Pneu</div>
-                    <div class="chip" onclick="toggleFoco(this, 'lixo')">Lixo / Entulho</div>
-                    <div class="chip" onclick="toggleFoco(this, 'vaso')">Vaso / Planta</div>
-                    <div class="chip" onclick="toggleFoco(this, 'calha')">Calha Predial</div>
-                    <div class="chip" onclick="toggleFoco(this, 'caixa_dagua')">Caixa d'Água</div>
-                    <div class="chip" onclick="toggleFoco(this, 'piscina')">Piscina</div>
+                <div class="grid-select">
+                    <div class="chip" onclick="toggleFoco(this, 'pneu')">
+                        <img src="img/pneu.png" alt="Pneu" class="chip-icon">
+                        Pneu
+                    </div>
+                    <div class="chip" onclick="toggleFoco(this, 'lixo')">
+                        <img src="img/lixo.png" alt="Lixo" class="chip-icon">
+                        Lixo/Entulho
+                    </div>
+                    <div class="chip" onclick="toggleFoco(this, 'vaso')">
+                        <img src="img/vaso.png" alt="Vaso" class="chip-icon">
+                        Vaso/Planta
+                    </div>
+                    <div class="chip" onclick="toggleFoco(this, 'calha')">
+                        <img src="img/calha.png" alt="Calha" class="chip-icon">
+                        Calha
+                    </div>
+                    <div class="chip" onclick="toggleFoco(this, 'caixa_dagua')">
+                        <img src="img/Caixa Água.png" alt="Caixa D'água" class="chip-icon">
+                        Caixa d'água
+                    </div>
+                    <div class="chip" onclick="toggleFoco(this, 'outros')">
+                        <img src="img/outros.png" alt="Outros" class="chip-icon">
+                        Outros
+                    </div>
                 </div>
 
-                <div style="margin-top: 20px;">
-                    <label style="display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">Observações Técnicas</label>
-                    <textarea id="input-obs" placeholder="Insira notas adicionais sobre a vistoria..." style="width: 100%; min-height: 90px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; color: var(--text-primary); font-size: 0.95rem; resize: vertical;"></textarea>
+                <button class="btn-primary" onclick="avancarLocalizacao()" style="margin-top: 24px;">Continuar &rarr;</button>
+            </div>
+        </div>
+
+        <div id="step-local" class="step">
+            <div class="card">
+                <p style="font-weight: 600; font-size: 1.1rem;">📍 Localização e Dados Finais</p>
+                
+                <div style="margin: 20px 0; padding: 16px; background: var(--bg); border-radius: 8px; text-align: center;">
+                    <p id="gps-status" style="color: var(--text-secondary); font-weight: 600;">Buscando coordenadas GPS...</p>
                 </div>
 
-                <div id="gps-status" style="margin-top: 15px; font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;">
-                    Buscando coordenadas de geolocalização...
+                <div id="manual-location" style="display: none; margin-bottom: 20px;">
+                    <label style="font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; display: block;">Identificação Manual do Setor/Quadra:</label>
+                    <input type="text" id="input-manual" placeholder="Ex: Setor 4, Quadra B..." class="input-hud-group" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
                 </div>
 
-                <div id="manual-location" style="display: none; margin-top: 15px;">
-                    <label style="display: block; font-size: 0.9rem; margin-bottom: 6px;">Identificação do Setor (Manual)</label>
-                    <input type="text" id="input-manual" placeholder="Ex: Setor 04, Bloco B" style="width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px; color: var(--text-primary);">
-                </div>
-
-                <button class="btn-primary" onclick="finalizarRegistro()" style="margin-top: 24px;">Salvar Relatório de Visita</button>
+                <label style="font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; display: block;">Observações Adicionais (Opcional):</label>
+                <textarea id="input-obs" rows="3" placeholder="Detalhes sobre a visita..." style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; resize: none;"></textarea>
+                
+                <button class="btn-primary" onclick="finalizarRegistro()" style="margin-top: 24px;">Salvar Registro</button>
             </div>
         </div>
     </div>
@@ -59,34 +89,57 @@
     <script type="module">
         import { localDB } from './js/db.js';
 
+        // Objeto que guardará os dados da visita
         let visita = { status: null, focos: [], gps_disponivel: false };
 
-        window.avancar = (status) => {
+        // Lógica do Passo 1
+        window.avancarStatus = (elemento, status) => {
+            // Remove a seleção de todos os botões de status
+            document.querySelectorAll('#step-status .chip').forEach(c => c.classList.remove('active'));
+            // Adiciona a seleção no botão clicado
+            elemento.classList.add('active');
             visita.status = status;
-            document.getElementById('step-status').classList.remove('active');
-            document.getElementById('step-focos').classList.add('active');
-            coletarCoordenadas();
+            
+            // Aguarda 300ms para dar tempo de ver a animação de clique, e avança
+            setTimeout(() => {
+                document.getElementById('step-status').classList.remove('active');
+                document.getElementById('step-focos').classList.add('active');
+            }, 300);
         };
 
-        window.toggleFoco = (el, tipo) => {
-            el.classList.toggle('active');
-            if(el.classList.contains('active')) {
+        // Lógica do Passo 2 (Múltipla Seleção)
+        window.toggleFoco = (elemento, tipo) => {
+            // Alterna a classe 'active' para ligar/desligar visualmente
+            elemento.classList.toggle('active');
+            
+            // Atualiza o array de focos
+            if(elemento.classList.contains('active')) {
                 visita.focos.push(tipo);
             } else {
                 visita.focos = visita.focos.filter(f => f !== tipo);
             }
         };
 
-        function coletarCoordenadas() {
-            if(!navigator.geolocation) { return falhaGPS("Não suportado"); }
+        // Lógica de avanço para o Passo 3
+        window.avancarLocalizacao = () => {
+            document.getElementById('step-focos').classList.remove('active');
+            document.getElementById('step-local').classList.add('active');
+            obterLocalizacao();
+        };
+
+        // Funções de GPS e Finalização (Mantidas iguais ao seu código original)
+        function obterLocalizacao() {
+            if (!navigator.geolocation) return falhaGPS("Geolocalização não suportada no seu aparelho");
+            
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
-                    visita.coordenadas = [pos.coords.longitude, pos.coords.latitude];
                     visita.gps_disponivel = true;
-                    document.getElementById('gps-status').innerText = "Coordenadas GPS consolidadas com sucesso.";
+                    visita.lat = pos.coords.latitude;
+                    visita.lng = pos.coords.longitude;
+                    document.getElementById('gps-status').innerText = "📍 Coordenadas GPS consolidadas com sucesso.";
                     document.getElementById('gps-status').style.color = "var(--success)";
                 },
-                () => { falhaGPS("Sinal indisponível"); },
+                (err) => { falhaGPS("Sinal indisponível"); },
                 { timeout: 10000, enableHighAccuracy: true }
             );
         }

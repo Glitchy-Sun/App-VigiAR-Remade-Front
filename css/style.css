@@ -2,10 +2,10 @@
    VARIÁVEIS DE TEMA E BASE (CORES, FONTES, FUNDO)
 =============================================================== */
 :root {
-    --primary: #ffffff;
+    --primary: #000000;
     --primary-hover: #000000;
     --primary-soft: #E1F0FF;
-    --bg: #054d7d;
+    --bg: #000000c1;
     --surface: #dddddd;
     --text-primary: #00b409;
     --text-secondary: #000000;

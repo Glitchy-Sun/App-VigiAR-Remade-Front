@@ -7,7 +7,7 @@ export async function syncData() {
     if (navigator.onLine) {
         try {
             // Aqui vai o seu fetch para a API (o backend que você já tem)
-            const response = await fetch('SUA_API_URL/sync', {
+            const response = await fetch('http://127.0.0.1:3000/sync', {
                 method: 'POST',
                 body: JSON.stringify(pendentes)
             });

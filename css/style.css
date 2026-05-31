@@ -5,8 +5,8 @@
     --primary: #ffffff;
     --primary-hover: #000000;
     --primary-soft: #E1F0FF;
-    --bg: #013c64;
-    --surface: #ffffff;
+    --bg: #054d7d;
+    --surface: #dddddd;
     --text-primary: #00b409;
     --text-secondary: #000000;
     --border: #E0E0E0;
@@ -209,7 +209,7 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
     display: flex;
     align-items: center;
     gap: 18px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     border: 1px solid var(--border);
     transition: transform 0.2s;
 }
@@ -231,7 +231,7 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
 }
 .stat-icon.info { color: var(--primary); background: var(--primary-soft); }
 .stat-icon.alert { color: #f59e0b; background: #fef3c7; }
-.stat-icon.error { color: var(--error); background: #fee2e2; }
+.stat-icon.error { color: var(--error); background: #dab2b2; }
 
 .stat-info h3 {
     font-size: 1.6rem;
@@ -279,7 +279,7 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
     text-transform: uppercase;
 }
 .badge.visited { background: #dcfce7; color: #15803d; }
-.badge.closed { background: #fee2e2; color: #b91c1c; }
+.badge.closed { background: #f20505; color: #b91c1c; }
 
 /* Ocultar barra superior antiga */
 .navbar { display: none; } 
@@ -376,7 +376,7 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
     background: rgba(22, 72, 99, 0.92);
     padding: 40px 30px;
     border-radius: 24px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 20px 40px rgba(227, 227, 227, 0.614);
     width: 90%;
     max-width: 450px;
     backdrop-filter: blur(10px);
@@ -408,18 +408,18 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
     font-size: 1rem;
     background: #ffffff;
     transition: all 0.3s ease;
-    color: #4b4b4b;
+    color: #353535;
 }
 
 .input-hud-group input::placeholder {
-    color: #000000;
+    color: #a7a7a7;
 }
 
 /* Efeito ao clicar no input */
 .input-hud-group input:focus {
     outline: none;
     border-color: var(--primary);
-    background: #424242;
+    background: #c3c3c3;
     box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
 }
 
@@ -733,7 +733,7 @@ body.pendentes-dark-theme {
     background-color: var(--primary-soft);
     border-color: var(--primary);
     color: var(--primary);
-    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.15);
+    box-shadow: 0 4px 12px rgba(49, 49, 49, 0.15);
 }
 
 /* Ícones dentro das caixas */

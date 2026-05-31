@@ -1,5 +1,5 @@
 // db.js
-const QUEUE_KEY = "vigiar.pending.visitas";
+const QUEUE_KEY = "ecovetor.pending.visitas";
 
 /**
  * Módulo para gerenciar a fila de visitas offline.

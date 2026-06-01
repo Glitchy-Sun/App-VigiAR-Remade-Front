@@ -6,20 +6,17 @@
     <title>Dashboard | EcoVetor</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    
     <link rel="stylesheet" href="css/style.css">
 
     <style>
-        /* Ajuste do mapa para o novo layout */
+        html { scroll-behavior: smooth; }
         #map { height: 350px; width: 100%; border-radius: 0 0 var(--radius) var(--radius); }
     </style>
 </head>
 <body>
 
     <div class="app-layout">
-        
         <aside class="sidebar">
             <div class="sidebar-logo">
                 <i class="ph-fill ph-mosquito" style="font-size: 1.8rem; color: var(--primary);"></i>
@@ -29,7 +26,7 @@
                 <a href="index.html" class="active"><i class="ph ph-squares-four"></i> Dashboard</a>
                 <a href="registro.html"><i class="ph ph-plus-circle"></i> Nova Visita</a>
                 <a href="pendentes.html"><i class="ph ph-cloud-arrow-up"></i> Pendências</a>
-                <a href="#"><i class="ph ph-map-pin"></i> Mapa</a>
+                <a href="#map"><i class="ph ph-map-pin"></i> Mapa</a>
             </nav>
             <div class="sidebar-footer">
                 <a href="login.html" onclick="localStorage.removeItem('vigiar.user')">
@@ -39,7 +36,6 @@
         </aside>
 
         <main class="main-content">
-            
             <header class="top-header">
                 <h2 style="font-size: 1.5rem; font-weight: 700;">Dashboard</h2>
                 
@@ -49,12 +45,13 @@
                         <span>Agente de Endemias</span>
                     </div>
                     <img src="https://ui-avatars.com/api/?name=João+Agente&background=007AFF&color=fff" alt="Perfil" class="avatar" id="user-avatar">
-                    <button class="icon-btn" title="Configurações da Conta"><i class="ph ph-gear"></i></button>
+                    <a href="#" onclick="alert('Página de configurações em breve!');" class="icon-btn" title="Configurações da Conta" style="text-decoration: none;">
+                        <i class="ph ph-gear"></i>
+                    </a>
                 </div>
             </header>
 
             <div class="dashboard-body animate-slide">
-                
                 <div class="dashboard-stats">
                     <div class="stat-card">
                         <div class="stat-icon info"><i class="ph ph-house-line"></i></div>
@@ -67,7 +64,8 @@
                     <div class="stat-card warning" onclick="window.location.href='pendentes.html'" style="cursor: pointer;" title="Clique para sincronizar">
                         <div class="stat-icon alert"><i class="ph ph-arrows-clockwise"></i></div>
                         <div class="stat-info">
-                            <h3 id="contador-pendencias">3</h3>
+                            <!-- O ID abaixo agora será atualizado via JavaScript -->
+                            <h3 id="contador-pendencias">0</h3>
                             <p>Sincronização Pendente</p>
                         </div>
                     </div>
@@ -82,7 +80,6 @@
                 </div>
 
                 <div class="dashboard-grid">
-                    
                     <div class="grid-left">
                         <div class="card" style="margin-bottom: 20px;">
                             <h3 style="margin-bottom: 15px; font-size: 1.1rem;">Ações Rápidas</h3>
@@ -94,31 +91,21 @@
                         <div class="card">
                             <h3 style="margin-bottom: 15px; font-size: 1.1rem;">Últimas Visitas</h3>
                             <ul class="recent-list">
-                                <li>
-                                    <span>Rua das Flores, 123</span>
-                                    <span class="badge closed">Fechada</span>
-                                </li>
-                                <li>
-                                    <span>Av. Principal, 45</span>
-                                    <span class="badge visited">Visitada</span>
-                                </li>
-                                <li>
-                                    <span>Rua do Sol, 89</span>
-                                    <span class="badge visited">Visitada</span>
-                                </li>
+                                <li><span>Rua das Flores, 123</span><span class="badge closed">Fechada</span></li>
+                                <li><span>Av. Principal, 45</span><span class="badge visited">Visitada</span></li>
+                                <li><span>Rua do Sol, 89</span><span class="badge visited">Visitada</span></li>
                             </ul>
                         </div>
                     </div>
 
                     <div class="grid-right">
-                        <div class="card" style="padding: 0; display: flex; flex-direction: column; height: 100%; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                        <div class="card" style="padding: 0; display: flex; flex-direction: column; height: 100%;">
                             <div style="padding: 15px 20px; border-bottom: 1px solid var(--border);">
-                                <h3 style="margin: 0; font-size: 1.1rem;">Mapa de Calor de Focos</h3>
+                                <h3 style="margin: 0; font-size: 1.1rem;" id="mapa-titulo">Mapa de Calor de Focos</h3>
                             </div>
                             <div id="map"></div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </main>
@@ -126,32 +113,29 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Verificação de Autenticação
-        const userRaw = localStorage.getItem('vigiar.user');
-        if (!userRaw) {
-            window.location.href = 'login.html';
-        } else {
+        const map = L.map('map').setView([-20.2581, -42.0353], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+        L.marker([-20.2581, -42.0353]).addTo(map).bindPopup('Ponto de monitoramento ativo.').openPopup();
+    </script>
+
+    <!-- Script para atualizar o contador de pendências -->
+    <script type="module">
+        import { localDB } from './js/db.js';
+        
+        async function carregarEstatisticas() {
             try {
-                // Tenta puxar o nome do usuário do localStorage para atualizar a UI
-                const user = JSON.parse(userRaw);
-                if(user.nome) {
-                    document.getElementById('user-name').innerText = user.nome;
-                    document.getElementById('user-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nome)}&background=007AFF&color=fff`;
+                const pendentes = await localDB.list();
+                const contador = document.getElementById('contador-pendencias');
+                if (contador) {
+                    contador.innerText = pendentes.length;
                 }
-            } catch(e) {}
+            } catch(e) {
+                console.error("Erro ao ler banco de dados:", e);
+            }
         }
-
-        // Inicialização do Mapa
-        const map = L.map('map').setView([-8.0584, -34.8848], 13);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
-
-        // Marcador de Exemplo
-        L.marker([-8.0584, -34.8848]).addTo(map)
-            .bindPopup('Ponto de monitoramento.')
-            .openPopup();
+        
+        // Chama a função assim que a página carrega
+        carregarEstatisticas();
     </script>
 </body>
 </html>

@@ -2,47 +2,41 @@
    VARIÁVEIS DE TEMA E BASE (CORES, FONTES, FUNDO)
 =============================================================== */
 :root {
-    --primary: #000000;
-    --primary-hover: #000000;
-    --primary-soft: #E1F0FF;
-    --bg: #000000c1;
-    --surface: #dddddd;
-    --text-primary: #00b409;
-    --text-secondary: #000000;
-    --border: #E0E0E0;
+    --primary: #10b981;         /* Verde moderno e principal */
+    --primary-hover: #059669;   /* Verde mais escuro para botões */
+    --primary-soft: #d1fae5;    /* Verde bem clarinho para fundos selecionados */
+    --bg: #f8fafc;              /* Cinza muito claro para o fundo da página (Flat) */
+    --surface: #ffffff;         /* Branco puro para os cards */
+    --text-primary: #1e293b;    /* Cinza escuro/Azulado para textos principais */
+    --text-secondary: #64748b;  /* Cinza médio para textos secundários */
+    --border: #e2e8f0;          /* Cinza claro para bordas limpas */
     --success: #28a745;
     --error: #dc3545;
     --radius: 12px;
 }
 
 /* Base */
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
 body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6; }
 
-/* --- Componentes Gerais (Caixas, Container, Botões) --- */
+/* ============================================================
+   COMPONENTES GERAIS (BOTÕES E CONTAINERS)
+=============================================================== */
 .container { padding: 20px; max-width: 600px; margin: 0 auto; }
 
-.card { 
-    background: var(--surface); padding: 15px; margin-bottom: 10px; 
-    border-radius: var(--radius); border-left: 5px solid var(--primary);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
 .btn-primary { 
-    width: 100%; padding: 12px; background: var(--primary); color: #0095ff; 
-    border: none; border-radius: 8px; font-weight: 600; cursor: pointer;
+    width: 100%; padding: 12px; background: var(--primary); color: #ffffff; 
+    border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s;
 }
+.btn-primary:hover { background: var(--primary-hover); }
 
 /* --- Controle das Etapas do Registro --- */
 .step { display: none; }
 .step.active { display: block; animation: fadeIn 0.3s; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* ============================================================ */
-/* DEIXE O SEU CÓDIGO DE "NOVO LAYOUT" E O RESTANTE ABAIXO DISSO */
-
 /* ============================================================
-   NOVO LAYOUT: DASHBOARD COM BARRA LATERAL E HEADER (DESKTOP E MOBILE)
+   NOVO LAYOUT: DASHBOARD (DESKTOP E MOBILE) - DESIGN FLAT
 =============================================================== */
 
 /* Layout Principal */
@@ -53,7 +47,7 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
     background-color: var(--bg);
 }
 
-/* Sidebar (Barra Lateral) */
+/* Sidebar (Barra Lateral) - Sem Sombras */
 .sidebar {
     width: 260px;
     background: var(--surface);
@@ -61,690 +55,187 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
     display: flex;
     flex-direction: column;
     z-index: 100;
+    box-shadow: none; /* Garante que não tenha relevo */
 }
 
 .sidebar-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    padding: 24px 20px;
+    display: flex; align-items: center; gap: 10px; font-size: 1.5rem;
+    font-weight: 800; color: var(--text-primary); padding: 24px 20px;
     border-bottom: 1px solid var(--border);
 }
 
-.sidebar-nav {
-    padding: 20px 0;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-}
-
+.sidebar-nav { padding: 20px 0; display: flex; flex-direction: column; flex: 1; }
 .sidebar-nav a {
-    padding: 14px 24px;
-    text-decoration: none;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    border-left: 4px solid transparent;
+    padding: 14px 24px; text-decoration: none; color: var(--text-secondary);
+    display: flex; align-items: center; gap: 12px; font-weight: 600;
+    transition: all 0.2s ease; border-left: 4px solid transparent;
 }
-
-.sidebar-nav a i {
-    font-size: 1.3rem;
-}
-
+.sidebar-nav a i { font-size: 1.3rem; }
 .sidebar-nav a:hover, .sidebar-nav a.active {
-    background: var(--primary-soft);
-    color: var(--primary);
-    border-left: 4px solid var(--primary);
+    background: var(--primary-soft); color: var(--primary); border-left: 4px solid var(--primary);
 }
 
-.sidebar-footer {
-    padding: 20px;
-    border-top: 1px solid var(--border);
-}
+.sidebar-footer { padding: 20px; border-top: 1px solid var(--border); }
+.sidebar-footer a { display: flex; align-items: center; gap: 10px; color: var(--error); text-decoration: none; font-weight: 600; }
 
-.sidebar-footer a {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--error);
-    text-decoration: none;
-    font-weight: 600;
-}
-
-/* Área de Conteúdo */
+/* Área de Conteúdo - Ajustada com maiores margens */
 .main-content {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    padding: 32px 40px; /* Margens internas maiores para respiro */
 }
 
-/* Header Superior (Perfil e Configurações) */
+/* Header Superior */
 .top-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 30px;
-    background: var(--surface);
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 0; /* Removido padding lateral e fundo pois o main-content já resolve o espaçamento */
+    margin-bottom: 20px;
+    background: transparent;
     border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 90;
 }
 
-.user-profile {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.user-info {
-    display: flex;
-    flex-direction: column;
-    text-align: right;
-}
-
-.user-info strong {
-    color: var(--text-primary);
-    font-size: 0.95rem;
-}
-
-.user-info span {
-    color: var(--text-secondary);
-    font-size: 0.8rem;
-}
-
-.avatar {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    border: 2px solid var(--primary-soft);
-}
+.user-profile { display: flex; align-items: center; gap: 15px; }
+.user-info { display: flex; flex-direction: column; text-align: right; }
+.user-info strong { color: var(--text-primary); font-size: 0.95rem; }
+.user-info span { color: var(--text-secondary); font-size: 0.8rem; }
+.avatar { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--primary-soft); }
 
 .icon-btn {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+    background: none; border: none; font-size: 1.5rem; color: var(--text-secondary);
+    cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: 50%;
 }
-
-.icon-btn:hover {
-    color: var(--text-primary);
-    background: var(--bg);
-}
+.icon-btn:hover { color: var(--text-primary); background: #e2e8f0; }
 
 /* Corpo do Dashboard */
-.dashboard-body {
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+.dashboard-body { display: flex; flex-direction: column; gap: 30px; }
+
+/* --- Cards (Visual Flat / Sem Relevo) --- */
+.card, .stat-card { 
+    background: var(--surface); 
+    padding: 24px; 
+    margin-bottom: 20px; 
+    border-radius: var(--radius); 
+    border: 1px solid var(--border); 
+    box-shadow: none; /* REMOVE O RELEVO */
 }
 
-/* Cards Estatísticos */
-.dashboard-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-}
+.card { border-left: 5px solid var(--primary); }
 
-.stat-card {
-    background: var(--surface);
-    padding: 24px;
-    border-radius: var(--radius);
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    border: 1px solid var(--border);
-    transition: transform 0.2s;
-}
+/* Grid de Estatísticas */
+.dashboard-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+.stat-card { display: flex; align-items: center; gap: 18px; margin-bottom: 0; border-left-width: 4px; }
+.stat-card.warning { border-left-color: #f59e0b; }
+.stat-card.danger { border-left-color: var(--error); }
+.stat-card:hover { border-color: #cbd5e1; } /* Interação suave ao passar o mouse, sem usar sombra */
 
-.stat-card:hover {
-    transform: translateY(-2px);
-}
-
-.stat-card.warning { border-left: 4px solid #f59e0b; }
-.stat-card.danger { border-left: 4px solid var(--error); }
-
-.stat-icon {
-    font-size: 2rem;
-    padding: 12px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+.stat-icon { font-size: 2rem; padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
 .stat-icon.info { color: var(--primary); background: var(--primary-soft); }
 .stat-icon.alert { color: #f59e0b; background: #fef3c7; }
-.stat-icon.error { color: var(--error); background: #dab2b2; }
+.stat-icon.error { color: var(--error); background: #fee2e2; }
 
-.stat-info h3 {
-    font-size: 1.6rem;
-    line-height: 1.2;
-    color: var(--text-primary);
-}
-.stat-info p {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-}
+.stat-info h3 { font-size: 1.6rem; line-height: 1.2; color: var(--text-primary); }
+.stat-info p { font-size: 0.9rem; color: var(--text-secondary); }
 
 /* Grid do Mapa e Lista */
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 24px;
-}
+.dashboard-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; }
 
 /* Lista de Últimas Visitas */
-.recent-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
+.recent-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.recent-list li { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 0.95rem; color: var(--text-primary); }
+.recent-list li:last-child { border-bottom: none; }
 
-.recent-list li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.95rem;
-    color: var(--text-primary);
-}
-.recent-list li:last-child {
-    border-bottom: none;
-}
-
-.badge {
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-}
+.badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
 .badge.visited { background: #dcfce7; color: #15803d; }
-.badge.closed { background: #f20505; color: #b91c1c; }
+.badge.closed { background: #fee2e2; color: #b91c1c; }
 
-/* Ocultar barra superior antiga */
 .navbar { display: none; } 
 
 /* ============================================================
-   RESPONSIVIDADE (MOBILE)
+   RESPONSIVIDADE DASHBOARD (MOBILE)
 =============================================================== */
-@media (max-width: 992px) {
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
+@media (max-width: 992px) { .dashboard-grid { grid-template-columns: 1fr; } }
 @media (max-width: 768px) {
-    .app-layout {
-        flex-direction: column;
-    }
-    
-    /* Transformando a Sidebar em um Menu Inferior (Bottom Nav) para Celular */
-    .sidebar {
-        order: 3; /* Vai para o fim da tela */
-        width: 100%;
-        height: 70px;
-        flex-direction: row;
-        border-right: none;
-        border-top: 1px solid var(--border);
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-    }
-
-    .sidebar-logo, .sidebar-footer {
-        display: none; /* Esconde logo e footer no mobile inferior */
-    }
-
-    .sidebar-nav {
-        flex-direction: row;
-        justify-content: space-around;
-        padding: 0;
-        width: 100%;
-    }
-
-    .sidebar-nav a {
-        flex-direction: column;
-        padding: 10px 0;
-        gap: 4px;
-        font-size: 0.75rem;
-        border-left: none !important;
-        border-bottom: 4px solid transparent;
-        flex: 1;
-        justify-content: center;
-    }
-
-    .sidebar-nav a.active {
-        border-bottom: 4px solid var(--primary);
-        background: transparent;
-    }
-
-    .sidebar-nav a i {
-        font-size: 1.5rem;
-    }
-
-    .top-header {
-        padding: 15px 20px;
-    }
-
-    .dashboard-body {
-        padding: 20px;
-    }
-    
-    .user-info {
-        display: none; /* Oculta o nome, deixa só a foto para poupar espaço */
-    }
+    .app-layout { flex-direction: column; }
+    .main-content { padding: 20px; }
+    .sidebar { order: 3; width: 100%; height: 70px; flex-direction: row; border-right: none; border-top: 1px solid var(--border); }
+    .sidebar-logo, .sidebar-footer { display: none; }
+    .sidebar-nav { flex-direction: row; justify-content: space-around; padding: 0; width: 100%; }
+    .sidebar-nav a { flex-direction: column; padding: 10px 0; gap: 4px; font-size: 0.75rem; border-left: none !important; border-bottom: 4px solid transparent; flex: 1; justify-content: center; }
+    .sidebar-nav a.active { border-bottom: 4px solid var(--primary); background: transparent; }
+    .sidebar-nav a i { font-size: 1.5rem; }
+    .top-header { padding: 10px 0; }
+    .user-info { display: none; }
 }
+
 /* ============================================================
-   ESTILOS DA TELA DE LOGIN (HUD) COM BACKGROUND
+   ESTILOS DA TELA DE LOGIN/CADASTRO (HUD)
 =============================================================== */
-
-/* Fundo da tela de Autenticação */
 .auth-body-modern {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
-    margin: 0;
-    /* Substitua pelo caminho correto da sua imagem */
-    background: url('../img/19373.jpg') no-repeat center center;
-    background-size: cover;
-    font-family: 'Segoe UI', sans-serif;
-    overflow: hidden;
+    display: flex; justify-content: center; align-items: center;
+    height: 100vh; width: 100vw; margin: 0;
+    background: url('../19373.jpg') no-repeat center center;
+    background-size: cover; overflow: hidden;
 }
 
-/* Caixa Flutuante (HUD) com efeito translúcido (Glassmorphism) */
 .login-hud {
-    background: rgba(22, 72, 99, 0.92);
-    padding: 40px 30px;
-    border-radius: 24px;
-    box-shadow: 0 20px 40px rgba(227, 227, 227, 0.614);
-    width: 90%;
-    max-width: 450px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(22, 72, 99, 0.92); padding: 40px 30px; border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); width: 90%; max-width: 450px;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     border: 2px solid rgba(35, 204, 5, 0.725);
 }
 
-/* Campos de Input com Ícones */
-.input-hud-group {
-    position: relative;
-    margin-bottom: 20px;
-}
-
-.input-hud-group i {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #000000;
-    font-size: 1.3rem;
-    transition: color 0.3s;
-}
-
+.input-hud-group { position: relative; margin-bottom: 20px; }
+.input-hud-group i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #475569; font-size: 1.3rem; transition: color 0.3s; }
 .input-hud-group input {
-    width: 95%;
-    padding: 14px 14px 14px 48px; /* Espaço na esquerda para o ícone */
-    border: 1.5px solid #E0E0E0;
-    border-radius: 12px;
-    font-size: 1rem;
-    background: #ffffff;
-    transition: all 0.3s ease;
-    color: #353535;
+    width: 100%; padding: 14px 14px 14px 48px; border: 1.5px solid #cbd5e1;
+    border-radius: 12px; font-size: 1rem; background: #ffffff; color: #1e293b;
 }
+.input-hud-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+.input-hud-group input:focus + i { color: var(--primary); }
 
-.input-hud-group input::placeholder {
-    color: #a7a7a7;
-}
+.hud-options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-size: 0.9rem; }
+.hud-options .remember-me { display: flex; align-items: center; gap: 8px; color: #ffffff; cursor: pointer; }
+.hud-options .forgot-password { color: #4ade80; text-decoration: none; font-weight: 600; }
 
-/* Efeito ao clicar no input */
-.input-hud-group input:focus {
-    outline: none;
-    border-color: var(--primary);
-    background: #c3c3c3;
-    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
-}
-
-.input-hud-group input:focus + i,
-.input-hud-group input:not(:placeholder-shown) ~ i {
-    color: var(--primary);
-}
-
-/* Opções (Lembrar de mim e Esqueceu a Senha) */
-.hud-options {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    font-size: 0.9rem;
-}
-
-.hud-options .remember-me {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #000000;
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.hud-options .remember-me input[type="checkbox"] {
-    accent-color: var(--primary);
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-}
-
-.hud-options .forgot-password {
-    color: var(--primary);
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.hud-options .forgot-password:hover {
-    text-decoration: underline;
-}
-
-/* Botão de Entrar (Verde) */
 .btn-hud {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, #28a745, #218838); /* Gradiente Verde */
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-}
-
-.btn-hud:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
-    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white;
+    border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer;
 }
 
 /* ============================================================
-   TELA DE PENDÊNCIAS (DARK THEME / TABLE LAYOUT)
+   TELA DE PENDÊNCIAS (TABELA ESCURA)
 =============================================================== */
-
-/* Fundo exclusivo para a tela de pendências */
 body.pendentes-dark-theme {
-    background-color: #0f172a; /* Azul escuro profundo */
-    color: #e2e8f0;
-    font-family: 'Segoe UI', sans-serif;
-    display: flex;
-    justify-content: center;
-    padding: 40px 20px;
-    min-height: 100vh;
-    margin: 0;
+    background-color: #0f172a; color: #e2e8f0; display: flex; justify-content: center;
+    padding: 40px 20px; min-height: 100vh; margin: 0;
 }
-
-.sync-wrapper {
-    width: 100%;
-    max-width: 1000px;
-}
-
-/* Cabeçalho da página */
-.sync-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-}
-
-.back-link {
-    color: #94a3b8;
-    text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: color 0.2s;
-}
-
-.back-link:hover {
-    color: #f1f5f9;
-}
-
-.refresh-btn {
-    background: none;
-    border: none;
-    color: #2dd4bf; /* Verde água */
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 0.95rem;
-    transition: color 0.2s;
-}
-
-.refresh-btn:hover {
-    color: #5eead4;
-}
-
-.sync-title {
-    font-size: 1.8rem;
-    color: #2dd4bf; /* Verde água */
-    font-weight: 700;
-    margin-bottom: 24px;
-}
-
-/* Card Principal da Tabela */
-.table-card {
-    background-color: #1e293b; /* Fundo do card */
-    border-radius: 12px;
-    border: 1px solid #334155;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.table-responsive {
-    overflow-x: auto;
-}
-
-/* Tabela */
-.sync-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-}
-
-.sync-table th {
-    background-color: rgba(15, 23, 42, 0.4);
-    color: #2dd4bf;
-    font-size: 0.85rem;
-    font-weight: 700;
-    padding: 16px 20px;
-    letter-spacing: 0.5px;
-    border-bottom: 1px solid #334155;
-}
-
-.sync-table td {
-    padding: 16px 20px;
-    font-size: 0.95rem;
-    color: #cbd5e1;
-    border-bottom: 1px solid #334155;
-    vertical-align: middle;
-}
-
-.sync-table tbody tr:hover {
-    background-color: rgba(51, 65, 85, 0.3);
-}
-
-.sync-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-/* Colunas Específicas e Badges */
-.badge-house-closed {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background-color: rgba(245, 158, 11, 0.15);
-    color: #fbbf24;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.status-waiting {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    color: #94a3b8;
-    font-size: 0.9rem;
-}
-
-/* Botões de Ação na Tabela */
-.action-buttons {
-    display: flex;
-    gap: 12px;
-}
-
-.btn-icon {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn-icon.view { color: #38bdf8; }
-.btn-icon.view:hover { color: #7dd3fc; transform: scale(1.1); }
-
-.btn-icon.delete { color: #f87171; }
-.btn-icon.delete:hover { color: #fca5a5; transform: scale(1.1); }
-
-/* Rodapé e Botão de Sincronização */
-.sync-footer {
-    padding: 20px;
-    background-color: rgba(15, 23, 42, 0.3);
-    border-top: 1px solid #334155;
-}
-
-.btn-sync-server {
-    width: 100%;
-    background-color: #10b981; /* Verde base */
-    color: white;
-    border: none;
-    padding: 16px;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.btn-sync-server:hover {
-    background-color: #059669;
-}
-
-.btn-sync-server.processing {
-    background-color: #64748b;
-    cursor: not-allowed;
-    opacity: 0.8;
-}
+.sync-wrapper { width: 100%; max-width: 1000px; }
+.sync-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.back-link { color: #94a3b8; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.refresh-btn { background: none; border: none; color: #2dd4bf; font-weight: 600; cursor: pointer; }
+.sync-title { font-size: 1.8rem; color: #2dd4bf; font-weight: 700; margin-bottom: 24px; }
+.table-card { background-color: #1e293b; border-radius: 12px; border: 1px solid #334155; overflow: hidden; }
+.table-responsive { overflow-x: auto; }
+.sync-table { width: 100%; border-collapse: collapse; text-align: left; }
+.sync-table th { background-color: rgba(15, 23, 42, 0.4); color: #2dd4bf; font-size: 0.85rem; padding: 16px 20px; border-bottom: 1px solid #334155; }
+.sync-table td { padding: 16px 20px; color: #cbd5e1; border-bottom: 1px solid #334155; }
+.sync-footer { padding: 20px; background-color: rgba(15, 23, 42, 0.3); border-top: 1px solid #334155; }
+.btn-sync-server { width: 100%; background-color: #10b981; color: white; border: none; padding: 16px; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; }
 
 /* ============================================================
-   ÍCONES DE IMAGEM NOS BOTÕES DE FOCO (REGISTRO)
+   REGISTRO: GRADES E OPÇÕES CLICÁVEIS (CHIPS)
 =============================================================== */
-
-/* Adiciona um espaço (gap) perfeito entre o ícone e o texto no botão */
+.grid-select { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; }
 .chip {
-    gap: 10px; 
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; padding: 16px 12px; background-color: var(--surface);
+    border: 2px solid var(--border); border-radius: var(--radius); cursor: pointer;
+    font-size: 0.95rem; font-weight: 600; color: var(--text-primary); text-align: center; user-select: none;
 }
-
-/* Configuração do tamanho e comportamento das imagens PNG */
-.chip-icon {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-    transition: filter 0.3s ease, transform 0.2s ease;
-}
-
-/* Quando o agente clica no botão, a imagem fica toda branca para dar contraste com o fundo verde/escuro */
-.chip.active .chip-icon {
-    filter: brightness(0) invert(1);
-    transform: scale(1.1); /* Dá um pequeno efeito de pulo ao selecionar */
-}
-
-/* ============================================================
-   GRADES DE SELEÇÃO E OPÇÕES CLICÁVEIS (REGISTRO)
-=============================================================== */
-.grid-select {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Força exatas 2 colunas */
-    gap: 12px;
-    margin-top: 16px;
-}
-
-/* Visual profissional para as caixas de seleção */
-.chip {
-    display: flex;
-    flex-direction: column; /* Coloca o ícone em cima e o texto embaixo */
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 16px 12px;
-    background-color: var(--surface);
-    border: 2px solid var(--border);
-    border-radius: var(--radius);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    text-align: center;
-    user-select: none; /* Evita que o texto seja selecionado ao clicar rápido */
-}
-
-/* Efeito ao passar o mouse */
-.chip:hover {
-    border-color: #b3d4ff;
-    background-color: #f8fbff;
-}
-
-/* Efeito quando a caixa está SELECIONADA */
-.chip.active {
-    background-color: var(--primary-soft);
-    border-color: var(--primary);
-    color: var(--primary);
-    box-shadow: 0 4px 12px rgba(49, 49, 49, 0.15);
-}
-
-/* Ícones dentro das caixas */
-.chip-icon {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-    transition: transform 0.2s ease;
-}
-
-/* Aumenta o ícone levemente quando selecionado */
-.chip.active .chip-icon {
-    transform: scale(1.15);
-}
+.chip:hover { border-color: #cbd5e1; background-color: #f8fafc; }
+.chip.active { background-color: var(--primary-soft); border-color: var(--primary); color: var(--primary); box-shadow: none; }
+.chip-icon { width: 40px; height: 40px; object-fit: contain; transition: transform 0.2s ease, filter 0.2s ease; }
+.chip.active .chip-icon { filter: brightness(0) invert(1); transform: scale(1.15); }

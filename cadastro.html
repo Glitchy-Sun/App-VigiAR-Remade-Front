@@ -4,41 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoVetor - Cadastro</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="auth-body-modern">
 
-    <div class="container animate-slide" style="padding-top: 60px;">
+    <div class="login-hud animate-slide">
         <header style="text-align: center; margin-bottom: 32px;">
-            <h1 style="font-size: 2.5rem; color: #03dd69; font-weight: 800; letter-spacing: -1px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">EcoVetor 🦟</h1>
-            <p style="color: #ffffff; margin-top: 4px; font-weight: 500;">Cadastro de Agentes</p>
+            <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 2.5rem; color: var(--text-primary); font-weight: 800; letter-spacing: -1px;">
+                EcoVetor <img src="img/Mosquito.webp" alt="Ícone Mosquito" style="width: 60px; height: 50px; object-fit: contain;">
+            </h1>
+            <p style="color: var(--text-secondary); margin-top: 4px;">Cadastro de Agentes</p>
         </header>
         
-        <div class="card" style="padding: 24px;">
-            <p style="margin-bottom: 20px; font-weight: 600; font-size: 1.1rem; text-align: center; color: var(--text-primary);">
-                Preencha suas informações
-            </p>
-            
-            <form id="cadastroForm">
-                <div class="input-group" style="margin-bottom: 16px;">
-                    <input type="text" id="nome" placeholder="Nome Completo" required style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
-                </div>
+        <form id="cadastroForm">
+            <div class="input-hud-group">
+                <i class="ph ph-user"></i>
+                <input type="text" id="nome" placeholder="Nome Completo" required>
+            </div>
 
-                <div class="input-group" style="margin-bottom: 16px;">
-                    <input type="text" id="matricula" placeholder="Matrícula" required style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
-                </div>
-                
-                <div class="input-group" style="margin-bottom: 24px;">
-                    <input type="password" id="password" placeholder="Crie uma senha" required style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
-                </div>
-                
-                <button type="submit" class="btn-primary btn-pulse" style="width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Finalizar Cadastro</button>
-            </form>
-        </div>
+            <div class="input-hud-group">
+                <i class="ph ph-identification-card"></i>
+                <input type="text" id="matricula" placeholder="Matrícula" required>
+            </div>
+            
+            <div class="input-hud-group">
+                <i class="ph ph-lock-key"></i>
+                <input type="password" id="password" placeholder="Crie uma senha" required>
+            </div>
+            
+            <button type="submit" class="btn-hud btn-pulse">Finalizar Cadastro</button>
+        </form>
 
         <div style="text-align: center; margin-top: 24px; font-size: 0.95rem;">
-            <a href="login.html" style="color: #ffffff; font-weight: 600; text-decoration: none;">&larr; Voltar para o Login</a>
-            
+            <a href="login.html" style="color: var(--text-secondary); font-weight: 600; text-decoration: none;">&larr; Voltar para o Login</a>
         </div>
     </div>
 
@@ -52,7 +51,16 @@
                 matricula: document.getElementById('matricula').value,
                 password: document.getElementById('password').value
             };
-            await register(dados);
+            
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerText = "Cadastrando...";
+            
+            try {
+                await register(dados);
+            } catch(error) {
+                btn.innerText = originalText;
+            }
         });
     </script>
 </body>

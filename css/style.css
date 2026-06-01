@@ -176,7 +176,7 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
 .auth-body-modern {
     display: flex; justify-content: center; align-items: center;
     height: 100vh; width: 100vw; margin: 0;
-    background: url('../19373.jpg') no-repeat center center;
+    background: url('../img/19373.jpg') no-repeat center center;
     background-size: cover; overflow: hidden;
 }
 

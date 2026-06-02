@@ -1,23 +1,22 @@
 from fastapi import APIRouter, Query
 from app.models.foco import Foco
-from app.api.schemas.foco import FocoResponse  # <-- Importamos o novo Schema aqui
 from typing import List
 
-router = APIRouter(prefix="/focos", tags=["Focos"])
+router = APIRouter()
 
-@router.get("/proximos", response_model=List[FocoResponse]) # <-- Mudamos para usar o Schema de resposta
+@router.get("/proximos", response_model=List[Foco])
 async def get_focos_proximos(
-    lat: float = Query(..., description="Latitude atual do agente"),
-    long: float = Query(..., description="Longitude atual do agente"),
-    raio: int = Query(5000, description="Raio de busca em metros (padrão: 5km)")
+    lat: float = Query(...),
+    long: float = Query(...),
+    raio: int = Query(5000)
 ):
-    # Busca utilizando o índice espacial 2dsphere do MongoDB
+    # Busca utilizando o índice 2dsphere
     focos = await Foco.find({
         "location": {
             "$nearSphere": {
                 "$geometry": {
                     "type": "Point",
-                    "coordinates": [long, lat] # MongoDB usa [Longitude, Latitude]
+                    "coordinates": [long, lat]
                 },
                 "$maxDistance": raio
             }

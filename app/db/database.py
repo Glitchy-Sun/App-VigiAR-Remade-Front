@@ -1,14 +1,13 @@
 import os
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv 
 from app.core.config import settings
 from app.models.agente import Agente
 from app.models.foco import Foco
 from typing import Any, cast
 
-# Garante que as variáveis do arquivo .env sejam carregadas antes de qualquer outra configuração
-load_dotenv()
+load_dotenv(find_dotenv())
 
 async def init_db():
     database_url = None

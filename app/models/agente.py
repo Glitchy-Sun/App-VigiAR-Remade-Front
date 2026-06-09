@@ -3,9 +3,9 @@ from pydantic import Field
 
 class Agente(Document):
     nome: str
-    email: str
+    matricula: str
     senha_hash: str
     ativo: bool = True
 
     class Settings:
-        name = "agentes"  # Nome da coleção no MongoDB
+        name = "agentes"  # Nome da coleção no MongoDB Atlas

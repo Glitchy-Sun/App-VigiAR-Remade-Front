@@ -16,8 +16,17 @@ async def init_db():
             "Certifique-se de definir 'DATABASE_URL' ou 'MONGO_URI' no seu arquivo .env ou no Render."
         )
 
-    # Cria o cliente do MongoDB usando a URL configurada
-    client = AsyncIOMotorClient(database_url)
+    # Configuração de segurança para evitar rejeição de SSL pelo Windows ou provedor de Internet
+    client_kwargs = {}
+    try:
+        import certifi
+        client_kwargs["tlsCAFile"] = certifi.where()
+    except ImportError:
+        # Se o pacote certifi não estiver instalado, segue sem ele
+        pass
+
+    # Cria o cliente do MongoDB usando a URL configurada e os parâmetros TLS/SSL adicionais
+    client = AsyncIOMotorClient(database_url, **client_kwargs)
     
     try:
         database = client.get_default_database()

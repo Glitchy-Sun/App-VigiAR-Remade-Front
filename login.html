@@ -28,6 +28,15 @@
                 <input type="password" id="password" placeholder="Senha" required>
             </div>
 
+            <div class="input-hud-group">
+                <i class="ph ph-users-three"></i>
+                <select id="tipoConta" required style="width:100%; background: transparent; border:none; color:inherit; outline:none; padding-left:5px;">
+                    <option value="" disabled selected hidden>Acessar como...</option>
+                    <option value="agente" style="background:#222; color:#fff;">Agente de Saúde</option>
+                    <option value="secretario" style="background:#222; color:#fff;">Secretário de Saúde</option>
+                </select>
+            </div>
+
             <div class="hud-options">
                 <label class="remember-me">
                     <input type="checkbox" id="lembrar">
@@ -52,15 +61,19 @@
             e.preventDefault();
             const matricula = document.getElementById('matricula').value;
             const password = document.getElementById('password').value;
+            const tipo = document.getElementById('tipoConta').value; // Pegando o tipo!
 
             const btn = e.target.querySelector('button');
             const originalText = btn.innerText;
             btn.innerText = "Entrando...";
+            btn.disabled = true;
             
             try {
-                await login(matricula, password);
+                // Passando os 3 parâmetros conforme seu auth.js exige
+                await login(matricula, password, tipo);
             } catch(error) {
                 btn.innerText = originalText;
+                btn.disabled = false;
             }
         });
     </script>

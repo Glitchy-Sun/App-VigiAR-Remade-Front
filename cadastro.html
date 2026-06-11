@@ -14,7 +14,7 @@
             <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 2.5rem; color: var(--text-primary); font-weight: 800; letter-spacing: -1px;">
                 EcoVetor <img src="img/Mosquito.webp" alt="Ícone Mosquito" style="width: 60px; height: 50px; object-fit: contain;">
             </h1>
-            <p style="color: var(--text-secondary); margin-top: 4px;">Cadastro de Agentes</p>
+            <p style="color: var(--text-secondary); margin-top: 4px;">Cadastro de Usuários</p>
         </header>
         
         <form id="cadastroForm">
@@ -32,6 +32,29 @@
                 <i class="ph ph-lock-key"></i>
                 <input type="password" id="password" placeholder="Crie uma senha" required>
             </div>
+
+            <div class="input-hud-group">
+                <i class="ph ph-users-three"></i>
+                <select id="tipoConta" required style="width:100%; background: transparent; border:none; color:inherit; outline:none; padding-left:5px;">
+                    <option value="" disabled selected hidden>Selecione o Tipo de Perfil</option>
+                    <option value="agente" style="background:#222; color:#fff;">Agente de Saúde</option>
+                    <option value="secretario" style="background:#222; color:#fff;">Secretário de Saúde</option>
+                </select>
+            </div>
+
+            <div style="margin: 20px 0; text-align: center; border: 1px dashed var(--border); padding: 15px; border-radius: var(--radius);">
+                <label style="color: var(--text-secondary); display: block; margin-bottom: 10px; font-weight: 600;">Foto de Rosto Obrigatória</label>
+                
+                <video id="webcam" autoplay playsinline style="width: 100%; max-width: 180px; border-radius: 8px; background: #000; display: none; margin: 0 auto;"></video>
+                <img id="photo-preview" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; display: none; margin: 0 auto 10px; border: 2px solid var(--primary);">
+                
+                <div style="margin-top: 10px; display: flex; gap: 8px; justify-content: center;">
+                    <button type="button" id="btn-camera" class="btn-hud" style="padding: 6px 12px; font-size: 0.8rem;"><i class="ph ph-camera"></i> Usar Câmera</button>
+                    <button type="button" id="btn-capture" class="btn-hud" style="padding: 6px 12px; font-size: 0.8rem; display: none; background: #28a745;"><i class="ph ph-aperture"></i> Capturar</button>
+                    <button type="button" id="btn-upload-trigger" class="btn-hud" style="padding: 6px 12px; font-size: 0.8rem;"><i class="ph ph-upload"></i> Subir Arquivo</button>
+                    <input type="file" id="file-photo" accept="image/*" style="display: none;">
+                </div>
+            </div>
             
             <button type="submit" class="btn-hud btn-pulse">Finalizar Cadastro</button>
         </form>
@@ -44,22 +67,82 @@
     <script type="module">
         import { register } from './js/auth.js'; 
         
+        let base64Foto = "";
+        const video = document.getElementById('webcam');
+        const imgPreview = document.getElementById('photo-preview');
+        const btnCamera = document.getElementById('btn-camera');
+        const btnCapture = document.getElementById('btn-capture');
+        const btnUploadTrigger = document.getElementById('btn-upload-trigger');
+        const filePhoto = document.getElementById('file-photo');
+        let streamRef = null;
+
+        btnCamera.addEventListener('click', async () => {
+            try {
+                imgPreview.style.display = "none";
+                video.style.display = "block";
+                btnCapture.style.display = "inline-block";
+                streamRef = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+                video.srcObject = streamRef;
+            } catch (err) {
+                alert("Não foi possível acessar a webcam. Use a opção de arquivo.");
+            }
+        });
+
+        btnCapture.addEventListener('click', () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth || 300;
+            canvas.height = video.videoHeight || 300;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            base64Foto = canvas.toDataURL('image/jpeg');
+            imgPreview.src = base64Foto;
+            imgPreview.style.display = "block";
+            video.style.display = "none";
+            btnCapture.style.display = "none";
+            
+            if (streamRef) streamRef.getTracks().forEach(track => track.stop());
+        });
+
+        btnUploadTrigger.addEventListener('click', () => filePhoto.click());
+        filePhoto.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    base64Foto = reader.result;
+                    imgPreview.src = base64Foto;
+                    imgPreview.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
         document.getElementById('cadastroForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            if(!base64Foto) {
+                alert("Por favor, tire uma foto de rosto ou envie um arquivo de imagem.");
+                return;
+            }
+
             const dados = {
                 nome: document.getElementById('nome').value,
                 matricula: document.getElementById('matricula').value,
-                password: document.getElementById('password').value
+                password: document.getElementById('password').value,
+                tipo: document.getElementById('tipoConta').value,
+                foto_base64: base64Foto
             };
             
-            const btn = e.target.querySelector('button');
+            const btn = e.target.querySelector('button[type="submit"]');
             const originalText = btn.innerText;
             btn.innerText = "Cadastrando...";
+            btn.disabled = true;
             
             try {
                 await register(dados);
             } catch(error) {
                 btn.innerText = originalText;
+                btn.disabled = false;
             }
         });
     </script>

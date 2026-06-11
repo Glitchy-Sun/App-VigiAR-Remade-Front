@@ -12,6 +12,7 @@
     <style>
         html { scroll-behavior: smooth; }
         #map { height: 350px; width: 100%; border-radius: 0 0 var(--radius) var(--radius); }
+        .avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
     </style>
 </head>
 <body>
@@ -29,7 +30,7 @@
                 <a href="#map"><i class="ph ph-map-pin"></i> Mapa</a>
             </nav>
             <div class="sidebar-footer">
-                <a href="login.html" onclick="localStorage.removeItem('vigiar.user')">
+                <a href="login.html" id="btn-logout">
                     <i class="ph ph-sign-out"></i> Sair
                 </a>
             </div>
@@ -41,13 +42,10 @@
                 
                 <div class="user-profile">
                     <div class="user-info">
-                        <strong id="user-name">João Agente</strong>
+                        <strong id="user-name">Carregando...</strong>
                         <span>Agente de Endemias</span>
                     </div>
-                    <img src="https://ui-avatars.com/api/?name=João+Agente&background=007AFF&color=fff" alt="Perfil" class="avatar" id="user-avatar">
-                    
-                       
-                    </a>
+                    <img src="img/default-user.png" alt="Perfil" class="avatar" id="user-avatar">
                 </div>
             </header>
 
@@ -56,7 +54,7 @@
                     <div class="stat-card">
                         <div class="stat-icon info"><i class="ph ph-house-line"></i></div>
                         <div class="stat-info">
-                            <h3>12</h3>
+                            <h3 id="visitas-hoje">0</h3>
                             <p>Visitas Hoje</p>
                         </div>
                     </div>
@@ -64,7 +62,6 @@
                     <div class="stat-card warning" onclick="window.location.href='pendentes.html'" style="cursor: pointer;" title="Clique para sincronizar">
                         <div class="stat-icon alert"><i class="ph ph-arrows-clockwise"></i></div>
                         <div class="stat-info">
-                            <!-- O ID abaixo agora será atualizado via JavaScript -->
                             <h3 id="contador-pendencias">0</h3>
                             <p>Sincronização Pendente</p>
                         </div>
@@ -89,12 +86,21 @@
                         </div>
 
                         <div class="card">
-                            <h3 style="margin-bottom: 15px; font-size: 1.1rem;">Últimas Visitas</h3>
-                            <ul class="recent-list">
-                                <li><span>Rua das Flores, 123</span><span class="badge closed">Fechada</span></li>
-                                <li><span>Av. Principal, 45</span><span class="badge visited">Visitada</span></li>
-                                <li><span>Rua do Sol, 89</span><span class="badge visited">Visitada</span></li>
-                            </ul>
+                            <h3 style="margin-bottom: 15px; font-size: 1.1rem;">Tarefas Atribuídas Pela Secretaria</h3>
+                            <div class="table-responsive">
+                                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid var(--border); color: var(--text-secondary); font-size: 0.85rem;">
+                                            <th style="padding-bottom: 10px;">AFAZER</th>
+                                            <th style="padding-bottom: 10px;">HORA</th>
+                                            <th style="padding-bottom: 10px;">AÇÃO</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="lista-agenda-agente">
+                                        <tr><td colspan="3" style="text-align:center; padding: 15px;">Carregando agenda...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
@@ -118,24 +124,89 @@
         L.marker([-20.2581, -42.0353]).addTo(map).bindPopup('Ponto de monitoramento ativo.').openPopup();
     </script>
 
-    <!-- Script para atualizar o contador de pendências -->
     <script type="module">
         import { localDB } from './js/db.js';
+        import { checkAuth } from './js/auth.js';
+        import { CONFIG } from './js/config.js';
+
+        // 1. Verificação de Autenticação e Perfil
+        const user = checkAuth('agente');
+        if (user) {
+            document.getElementById('user-name').innerText = user.nome;
+            if (user.foto_base64) {
+                document.getElementById('user-avatar').src = user.foto_base64;
+            }
+        }
+
+        // Correção do botão de sair
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            localStorage.removeItem('ecovetor.user');
+        });
         
+        // 2. Carrega Pendências e Visitas Diárias (Resetando no dia)
         async function carregarEstatisticas() {
             try {
                 const pendentes = await localDB.list();
                 const contador = document.getElementById('contador-pendencias');
-                if (contador) {
-                    contador.innerText = pendentes.length;
+                if (contador) contador.innerText = pendentes.length;
+
+                const visitasHojeElement = document.getElementById('visitas-hoje');
+                if (visitasHojeElement) {
+                    const hojePtBr = new Date().toLocaleDateString('pt-BR');
+                    const hojeISO = new Date().toISOString().split('T')[0];
+                    const visitasDeHoje = pendentes.filter(reg => 
+                        reg.data === hojePtBr || reg.data === hojeISO || String(reg.data).includes(hojePtBr)
+                    );
+                    visitasHojeElement.innerText = visitasDeHoje.length;
                 }
-            } catch(e) {
-                console.error("Erro ao ler banco de dados:", e);
-            }
+            } catch(e) { console.error(e); }
         }
         
-        // Chama a função assim que a página carrega
+        // 3. Carrega as Tarefas vindas do Secretário
+        async function carregarAgenda() {
+            try {
+                const r = await fetch(`${CONFIG.API_URL}/agendamentos/agente/${user.matricula}`);
+                const tarefas = await r.json();
+                const tbody = document.getElementById('lista-agenda-agente');
+                tbody.innerHTML = "";
+
+                if(!tarefas || tarefas.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding: 15px; color:var(--text-secondary);">Sem tarefas pendentes hoje.</td></tr>`;
+                    return;
+                }
+
+                tarefas.forEach(t => {
+                    if(t.status === 'concluido') return; // Oculta as concluídas da tela do agente
+
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+                    tr.innerHTML = `
+                        <td style="padding: 12px 0;"><strong>${t.afazer}</strong></td>
+                        <td style="padding: 12px 0;">${t.horario}</td>
+                        <td style="padding: 12px 0;">
+                            <button style="background:var(--primary); color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;" onclick="marcarConcluida('${t._id}')">Concluir</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error("Erro ao puxar agenda:", err);
+            }
+        }
+
+        window.marcarConcluida = async (id) => {
+            if(!confirm("Confirmar cumprimento desta tarefa?")) return;
+            try {
+                const r = await fetch(`${CONFIG.API_URL}/agendamentos/${id}/concluir`, { method: 'PATCH' });
+                if (r.ok) {
+                    alert("Tarefa concluída!");
+                    carregarAgenda(); // Atualiza a lista removendo a tarefa
+                }
+            } catch(e) { alert("Erro ao atualizar status."); }
+        };
+
         carregarEstatisticas();
-    </script>
+        if(user) carregarAgenda();
+    </script> 
 </body>
 </html>

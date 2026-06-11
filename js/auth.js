@@ -2,33 +2,33 @@ import { CONFIG } from './config.js';
 
 const USER_KEY = "ecovetor.user";
 
-// Função para fazer login
-export async function login(matricula, password) {
+export async function login(matricula, password, tipo) {
     try {
         const response = await fetch(`${CONFIG.API_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ matricula, password })
+            body: JSON.stringify({ matricula, password, tipo })
         });
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || "Erro ao fazer login. Verifique sua matrícula e senha.");
+            throw new Error(errorData.detail || "Erro ao fazer login. Verifique os dados.");
         }
 
         const data = await response.json();
-        
-        // Salva o usuário no navegador
         localStorage.setItem(USER_KEY, JSON.stringify(data.user));
         
-        // Redireciona para a Home
-        window.location.href = 'index.html'; 
+        // Redirecionamento dinâmico baseado no perfil retornado pelo MongoDB
+        if (data.user.tipo === "secretario") {
+            window.location.href = 'secretario.html';
+        } else {
+            window.location.href = 'index.html';
+        }
     } catch (error) {
         alert(error.message);
     }
 }
 
-// Função para registrar novo usuário
 export async function register(dados) {
     try {
         const response = await fetch(`${CONFIG.API_URL}/auth/register`, {
@@ -39,20 +39,27 @@ export async function register(dados) {
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || "Erro ao realizar cadastro.");
+            throw new Error(errorData.detail || "Erro ao realizar o cadastro.");
         }
 
         alert("Cadastro realizado com sucesso!");
-        window.location.href = 'login.html'; // Volta para o login após cadastrar
+        window.location.href = 'login.html';
     } catch (error) {
         alert(error.message);
     }
 }
 
-// Verifica se está logado (pode ser chamada nas páginas protegidas)
-export function checkAuth() {
-    const user = localStorage.getItem(USER_KEY);
-    if (!user && window.location.pathname !== '/login.html' && window.location.pathname !== '/cadastro.html') {
+export function checkAuth(tipoRequerido) {
+    const userStr = localStorage.getItem(USER_KEY);
+    if (!userStr) {
         window.location.href = 'login.html';
+        return null;
     }
+    const user = JSON.parse(userStr);
+    if (tipoRequerido && user.tipo !== tipoRequerido) {
+        alert("Acesso negado para o seu perfil.");
+        window.location.href = user.tipo === 'secretario' ? 'secretario.html' : 'index.html';
+        return null;
+    }
+    return user;
 }

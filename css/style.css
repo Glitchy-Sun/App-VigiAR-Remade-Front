@@ -90,7 +90,7 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
 /* Header Superior */
 .top-header {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 20px 0; /* Removido padding lateral e fundo pois o main-content já resolve o espaçamento */
+    padding: 20px 0;
     margin-bottom: 20px;
     background: transparent;
     border-bottom: 1px solid var(--border);
@@ -100,7 +100,7 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
 .user-info { display: flex; flex-direction: column; text-align: right; }
 .user-info strong { color: var(--text-primary); font-size: 0.95rem; }
 .user-info span { color: var(--text-secondary); font-size: 0.8rem; }
-.avatar { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--primary-soft); }
+.avatar { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--primary-soft); object-fit: cover; }
 
 .icon-btn {
     background: none; border: none; font-size: 1.5rem; color: var(--text-secondary);
@@ -113,7 +113,7 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
 .dashboard-body { display: flex; flex-direction: column; gap: 30px; }
 
 /* --- Cards (Visual Flat / Sem Relevo) --- */
-.card, .stat-card { 
+.card, .stat-card, .table-card { 
     background: var(--surface); 
     padding: 24px; 
     margin-bottom: 20px; 
@@ -123,13 +123,14 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
 }
 
 .card { border-left: 5px solid var(--primary); }
+.table-card { padding: 0; overflow: hidden; }
 
 /* Grid de Estatísticas */
 .dashboard-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
 .stat-card { display: flex; align-items: center; gap: 18px; margin-bottom: 0; border-left-width: 4px; }
 .stat-card.warning { border-left-color: #f59e0b; }
 .stat-card.danger { border-left-color: var(--error); }
-.stat-card:hover { border-color: #cbd5e1; } /* Interação suave ao passar o mouse, sem usar sombra */
+.stat-card:hover { border-color: #cbd5e1; }
 
 .stat-icon { font-size: 2rem; padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
 .stat-icon.info { color: var(--primary); background: var(--primary-soft); }
@@ -142,16 +143,26 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
 /* Grid do Mapa e Lista */
 .dashboard-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; }
 
-/* Lista de Últimas Visitas */
+/* Lista de Últimas Visitas e Tabelas */
 .recent-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
 .recent-list li { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 0.95rem; color: var(--text-primary); }
 .recent-list li:last-child { border-bottom: none; }
 
-.badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
-.badge.visited { background: #dcfce7; color: #15803d; }
-.badge.closed { background: #fee2e2; color: #b91c1c; }
+/* Tabela de Tarefas e Agendamentos (Tema Claro) */
+.table-responsive { overflow-x: auto; width: 100%; }
+.table-responsive table { width: 100%; border-collapse: collapse; text-align: left; }
+.table-responsive th { padding: 14px 20px; border-bottom: 2px solid var(--border); color: var(--text-secondary); font-size: 0.85rem; background: #f8fafc; }
+.table-responsive td { padding: 16px 20px; border-bottom: 1px solid var(--border); color: var(--text-primary); font-size: 0.95rem; }
 
-.navbar { display: none; } 
+/* Status Badges */
+.badge, .badge-status { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; display: inline-block; }
+.badge.visited, .status-valido { background: #dcfce7; color: #15803d; } /* Concluído */
+.badge.closed, .status-analise { background: #fef3c7; color: #b45309; } /* Pendente */
+
+/* Formulário do Secretário */
+.form-secretario { display: flex; gap: 15px; background: var(--surface); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 25px; flex-wrap: wrap; }
+.form-secretario input { flex: 1; min-width: 200px; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 1rem; color: var(--text-primary); background: var(--bg); }
+.form-secretario input:focus { outline: none; border-color: var(--primary); }
 
 /* ============================================================
    RESPONSIVIDADE DASHBOARD (MOBILE)
@@ -168,6 +179,7 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
     .sidebar-nav a i { font-size: 1.5rem; }
     .top-header { padding: 10px 0; }
     .user-info { display: none; }
+    .form-secretario { flex-direction: column; }
 }
 
 /* ============================================================
@@ -185,16 +197,19 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); width: 90%; max-width: 450px;
     backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     border: 2px solid rgba(35, 204, 5, 0.725);
+    max-height: 95vh; overflow-y: auto; /* Permite rolar se a câmera ocupar muito espaço no mobile */
 }
 
+/* Padronizando Input e Select juntos */
 .input-hud-group { position: relative; margin-bottom: 20px; }
-.input-hud-group i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #475569; font-size: 1.3rem; transition: color 0.3s; }
-.input-hud-group input {
+.input-hud-group i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #475569; font-size: 1.3rem; transition: color 0.3s; z-index: 2; }
+.input-hud-group input, .input-hud-group select {
     width: 100%; padding: 14px 14px 14px 48px; border: 1.5px solid #cbd5e1;
     border-radius: 12px; font-size: 1rem; background: #ffffff; color: #1e293b;
+    position: relative; z-index: 1; appearance: none;
 }
-.input-hud-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
-.input-hud-group input:focus + i { color: var(--primary); }
+.input-hud-group input:focus, .input-hud-group select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+.input-hud-group input:focus + i, .input-hud-group select:focus + i { color: var(--primary); }
 
 .hud-options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-size: 0.9rem; }
 .hud-options .remember-me { display: flex; align-items: center; gap: 8px; color: #ffffff; cursor: pointer; }
@@ -202,8 +217,9 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
 
 .btn-hud {
     width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white;
-    border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer;
+    border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: filter 0.2s;
 }
+.btn-hud:hover { filter: brightness(1.1); }
 
 /* ============================================================
    TELA DE PENDÊNCIAS (TABELA ESCURA)
@@ -217,8 +233,6 @@ body.pendentes-dark-theme {
 .back-link { color: #94a3b8; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 .refresh-btn { background: none; border: none; color: #2dd4bf; font-weight: 600; cursor: pointer; }
 .sync-title { font-size: 1.8rem; color: #2dd4bf; font-weight: 700; margin-bottom: 24px; }
-.table-card { background-color: #1e293b; border-radius: 12px; border: 1px solid #334155; overflow: hidden; }
-.table-responsive { overflow-x: auto; }
 .sync-table { width: 100%; border-collapse: collapse; text-align: left; }
 .sync-table th { background-color: rgba(15, 23, 42, 0.4); color: #2dd4bf; font-size: 0.85rem; padding: 16px 20px; border-bottom: 1px solid #334155; }
 .sync-table td { padding: 16px 20px; color: #cbd5e1; border-bottom: 1px solid #334155; }

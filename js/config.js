@@ -1,4 +1,4 @@
 export const CONFIG = {
-    API_URL: "http://127.0.0.1:8000/api", 
+    API_URL: "https://ecovetror-front.onrender.com", // <-- Coloque a URL do Render aqui
     VERSION: "1.0.0"
 };

@@ -3,7 +3,7 @@
 // 1. CONFIGURAÇÃO DA API
 // Substitua a URL abaixo pelo link gerado pelo Render após o deploy do seu Back-end
 const CONFIG = {
-    API_URL: "https://ecovetor-backend.onrender.com" // Exemplo: cole aqui a sua URL real
+    API_URL: "https://app-ads-back-end-wrlc.onrender.com" // Exemplo: cole aqui a sua URL real
 };
 
 let map;

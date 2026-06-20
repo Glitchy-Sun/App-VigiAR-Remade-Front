@@ -1,23 +1,29 @@
 import { db } from './db.js';
+import { CONFIG } from './config.js'; // Importação do config para usar a URL base
 
 export async function syncData() {
-    const pendentes = db.list();
+    const pendentes = await db.list(); // Adicionado o 'await' por segurança
     if (pendentes.length === 0) return;
 
     if (navigator.onLine) {
         try {
-            // Aqui vai o seu fetch para a API (o backend que você já tem)
-            const response = await fetch(`https://app-ads-back-end-wrlc.onrender.com`, {
+            // Aponta para a rota exata e adiciona o Content-Type obrigatório
+            const response = await fetch(`${CONFIG.API_URL}/sync`, {
                 method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json' 
+                },
                 body: JSON.stringify(pendentes)
             });
             
             if (response.ok) {
-                db.clear(); // Limpa a fila após sucesso
-                console.log("Dados sincronizados!");
+                await db.clear(); // Limpa a fila após sucesso
+                console.log("Dados de visitas sincronizados com a nuvem!");
+            } else {
+                console.error("Servidor recusou a sincronização. Status:", response.status);
             }
         } catch (e) {
-            console.error("Falha ao sincronizar", e);
+            console.error("Falha ao conectar com a API para sincronizar", e);
         }
     }
 }

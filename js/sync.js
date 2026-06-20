@@ -7,7 +7,7 @@ export async function syncData() {
     if (navigator.onLine) {
         try {
             // Aqui vai o seu fetch para a API (o backend que você já tem)
-            const response = await fetch(`${CONFIG.API_URL}/sync`, {
+            const response = await fetch(`https://app-ads-back-end-wrlc.onrender.com`, {
                 method: 'POST',
                 body: JSON.stringify(pendentes)
             });

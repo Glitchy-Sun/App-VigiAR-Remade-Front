@@ -78,11 +78,9 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
 .sidebar-footer { padding: 20px; border-top: 1px solid var(--border); }
 .sidebar-footer a { display: flex; align-items: center; gap: 10px; color: var(--error); text-decoration: none; font-weight: 600; }
 
-/* Área de Conteúdo - Ajustada com maiores margens */
+/* CORREÇÃO DO ERRO: Removido o display: flex que esmagava o conteúdo interno */
 .main-content {
     flex: 1;
-    display: flex;
-    flex-direction: column;
     overflow-y: auto;
     padding: 32px 40px; /* Margens internas maiores para respiro */
 }
@@ -125,6 +123,14 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
 .card { border-left: 5px solid var(--primary); }
 .table-card { padding: 0; overflow: hidden; }
 
+/* Container customizado para o Mapa Leaflet */
+#map {
+    width: 100%;
+    height: 580px; /* Altura ideal para um campo quadrado amplo e robusto */
+    border-radius: 0 0 var(--radius) var(--radius);
+    z-index: 1;
+}
+
 /* Grid de Estatísticas */
 .dashboard-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
 .stat-card { display: flex; align-items: center; gap: 18px; margin-bottom: 0; border-left-width: 4px; }
@@ -162,7 +168,7 @@ body { background-color: var(--bg); color: var(--text-primary); line-height: 1.6
 /* Formulário do Secretário */
 .form-secretario { display: flex; gap: 15px; background: var(--surface); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 25px; flex-wrap: wrap; }
 .form-secretario input { flex: 1; min-width: 200px; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 1rem; color: var(--text-primary); background: var(--bg); }
-.form-secretario input:focus { outline: none; border-color: var(--primary); }
+.form-secretario input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
 
 /* ============================================================
    RESPONSIVIDADE DASHBOARD (MOBILE)

@@ -70,8 +70,9 @@
                     <div class="stat-card danger">
                         <div class="stat-icon error"><i class="ph ph-bug"></i></div>
                         <div class="stat-info">
-                            <h3>5</h3>
-                            <p>Focos Encontrados</p>
+                            <!-- ADICIONADO O ID AQUI PARA CONTROLE VIA JAVASCRIPT -->
+                            <h3 id="focos-hoje">0</h3>
+                            <p>Focos Encontrados (Hoje)</p>
                         </div>
                     </div>
                 </div>
@@ -119,9 +120,36 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        const map = L.map('map').setView([-20.2581, -42.0353], 14);
+        // ATUALIZAÇÃO DO MAPA PARA BUSCAR A LOCALIZAÇÃO REAL
+        const map = L.map('map').setView([-20.2581, -42.0353], 14); // Coordenada de fallback (Manhuaçu)
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
-        L.marker([-20.2581, -42.0353]).addTo(map).bindPopup('Ponto de monitoramento ativo.').openPopup();
+        
+        let userMarker;
+
+        // Tenta capturar o GPS do usuário
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const lat = pos.coords.latitude;
+                    const lng = pos.coords.longitude;
+                    
+                    // Centraliza o mapa na localização real do agente
+                    map.setView([lat, lng], 16);
+                    
+                    userMarker = L.marker([lat, lng]).addTo(map)
+                        .bindPopup('Sua localização atual.').openPopup();
+                },
+                (err) => {
+                    console.warn("GPS negado ou indisponível. Usando ponto central padrão.");
+                    userMarker = L.marker([-20.2581, -42.0353]).addTo(map)
+                        .bindPopup('Ponto de monitoramento padrão.').openPopup();
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        } else {
+            userMarker = L.marker([-20.2581, -42.0353]).addTo(map)
+                .bindPopup('Localização não suportada pelo navegador.').openPopup();
+        }
     </script>
 
     <script type="module">
@@ -138,7 +166,6 @@
             }
         }
 
-        // Correção do botão de sair
         document.getElementById('btn-logout').addEventListener('click', () => {
             localStorage.removeItem('ecovetor.user');
         });
@@ -151,15 +178,35 @@
                 if (contador) contador.innerText = pendentes.length;
 
                 const visitasHojeElement = document.getElementById('visitas-hoje');
-                if (visitasHojeElement) {
+                const focosHojeElement = document.getElementById('focos-hoje');
+                
+                if (visitasHojeElement || focosHojeElement) {
                     const hojePtBr = new Date().toLocaleDateString('pt-BR');
                     const hojeISO = new Date().toISOString().split('T')[0];
-                    const visitasDeHoje = pendentes.filter(reg => 
-                        reg.data === hojePtBr || reg.data === hojeISO || String(reg.data).includes(hojePtBr)
-                    );
-                    visitasHojeElement.innerText = visitasDeHoje.length;
+                    
+                    // Filtra apenas os registros criados HOJE
+                    const visitasDeHoje = pendentes.filter(reg => {
+                        const dataReferencia = reg.registrado_em || reg.data || "";
+                        return dataReferencia.includes(hojePtBr) || dataReferencia.includes(hojeISO);
+                    });
+                    
+                    // Atualiza a caixa de Visitas Hoje
+                    if (visitasHojeElement) {
+                        visitasHojeElement.innerText = visitasDeHoje.length;
+                    }
+
+                    // ATUALIZAÇÃO: Calcula e exibe o total de Focos Hoje
+                    if (focosHojeElement) {
+                        let totalFocosHoje = 0;
+                        visitasDeHoje.forEach(visita => {
+                            if (visita.focos && Array.isArray(visita.focos)) {
+                                totalFocosHoje += visita.focos.length;
+                            }
+                        });
+                        focosHojeElement.innerText = totalFocosHoje;
+                    }
                 }
-            } catch(e) { console.error(e); }
+            } catch(e) { console.error("Erro ao carregar estatísticas:", e); }
         }
         
         // 3. Carrega as Tarefas vindas do Secretário
@@ -200,7 +247,7 @@
                 const r = await fetch(`${CONFIG.API_URL}/agendamentos/${id}/concluir`, { method: 'PATCH' });
                 if (r.ok) {
                     alert("Tarefa concluída!");
-                    carregarAgenda(); // Atualiza a lista removendo a tarefa
+                    carregarAgenda(); 
                 }
             } catch(e) { alert("Erro ao atualizar status."); }
         };

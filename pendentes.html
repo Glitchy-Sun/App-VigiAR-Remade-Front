@@ -6,6 +6,78 @@
     <title>Registros Pendentes | EcoVetor</title>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        /* === CUSTOMIZAÇÃO DO HUD DE PENDÊNCIAS (MODO ESCURO SEGURO) === */
+        
+        /* Ajusta o miolo do card para não herdar o branco do tema claro */
+        .pendentes-dark-theme .table-card {
+            background-color: #1e293b !important; 
+            border-color: #334155 !important;
+        }
+
+        /* Deixa o topo (cabeçalho) totalmente preto */
+        .pendentes-dark-theme .sync-table thead tr {
+            background-color: #000000 !important;
+        }
+        .pendentes-dark-theme .sync-table th {
+            background-color: #000000 !important;
+            color: #2dd4bf !important;
+            border-bottom: 1px solid #334155 !important;
+        }
+
+        /* Deixa a linha de dados com fundo condizente ao modo escuro */
+        .pendentes-dark-theme .sync-table td {
+            background-color: #1e293b !important;
+            color: #cbd5e1 !important;
+            border-bottom: 1px solid #334155 !important;
+        }
+
+        /* Deixa o rodapé da sincronização totalmente preto */
+        .pendentes-dark-theme .sync-footer {
+            background-color: #000000 !important;
+            border-top: 1px solid #334155 !important;
+        }
+
+        /* === DESIGN DOS BOTÕES DE AÇÃO (LUPA E LIXEIRA) === */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+        }
+
+        /* Estilização da Lupa (Visualizar) */
+        .btn-icon.view {
+            color: #2dd4bf;
+            background-color: rgba(45, 212, 191, 0.1);
+        }
+        .btn-icon.view:hover {
+            background-color: rgba(45, 212, 191, 0.25);
+            transform: translateY(-1px);
+        }
+
+        /* Estilização da Lixeira (Excluir) */
+        .btn-icon.delete {
+            color: #f87171;
+            background-color: rgba(248, 113, 113, 0.1);
+        }
+        .btn-icon.delete:hover {
+            background-color: rgba(248, 113, 113, 0.25);
+            transform: translateY(-1px);
+        }
+    </style>
 </head>
 <body class="pendentes-dark-theme">
 
@@ -55,7 +127,7 @@
             
             // Layout de vazio caso não tenha registros
             if(items.length === 0) {
-                container.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94a3b8; padding: 40px;">Nenhum registro pendente para sincronização.</td></tr>`;
+                container.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94a3b8; padding: 40px; background-color: #1e293b;">Nenhum registro pendente para sincronização.</td></tr>`;
                 return;
             }
 
@@ -77,7 +149,6 @@
                     }
                 }
 
-                // Note o "onclick" passando a posição (index) do item no array
                 return `
                 <tr>
                     <td>${dataFormatada}</td>
@@ -107,26 +178,29 @@
             alert(`🔍 DETALHES DA VISITA:\n\nStatus: ${status}\nFocos Assinalados: ${focos}\nObservações: ${obs}`);
         };
 
-        // --- Função LIXEIRA (Excluir) ---
+        // --- Função LIXEIRA (Excluir Atualizada) ---
         window.excluirRegistro = async (index) => {
             const reg = window.registrosGlobais[index];
             if (!reg) return;
 
-            if (confirm("Tem certeza que deseja excluir permanentemente este registro?")) {
+            if (confirm("Tem certeza que deseja excluir permanentemente este registro pendente?")) {
                 try {
-                    // Espera-se que seu db.js tenha um método de delete ou remove. 
-                    if (reg.id && typeof localDB.delete === 'function') {
-                        await localDB.delete(reg.id);
-                    } else if (reg.id && typeof localDB.remove === 'function') {
-                        await localDB.remove(reg.id);
+                    // Tratamento dinâmico baseado na estrutura do seu db.js para garantir a exclusão física do item
+                    if (typeof localDB.delete === 'function') {
+                        // Tenta deletar usando a chave ID do IndexedDB/Objeto ou a própria posição se for array
+                        await localDB.delete(reg.id !== undefined ? reg.id : index);
+                    } else if (typeof localDB.remove === 'function') {
+                        await localDB.remove(reg.id !== undefined ? reg.id : index);
                     } else {
-                        console.warn("Nenhum método de exclusão encontrado. Verifique seu db.js");
+                        // Caso seu db.js use uma estratégia de manipulação direta do array em cache
+                        throw new Error("Método de exclusão não mapeado no localDB.");
                     }
                     
-                    // Recarrega a tabela e atualiza visualmente
+                    alert("Registro removido com sucesso!");
+                    // Atualiza a tabela imediatamente após apagar do IndexedDB/Cache
                     await window.carregarLista();
                 } catch(e) {
-                    alert("Ocorreu um erro ao tentar excluir.");
+                    alert("Erro ao tentar excluir o registro do banco de dados local.");
                     console.error(e);
                 }
             }

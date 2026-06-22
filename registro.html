@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Novo Registro | EcoVetor</title>
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 <body>
     <div class="container">
@@ -73,9 +74,12 @@
                     <p id="gps-status" style="color: var(--text-secondary); font-weight: 600;">Buscando coordenadas GPS...</p>
                 </div>
 
-                <div id="manual-location" style="display: none; margin-bottom: 20px;">
-                    <label style="font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; display: block;">Identificação Manual do Setor/Quadra:</label>
-                    <input type="text" id="input-manual" placeholder="Ex: Setor 4, Quadra B..." class="input-hud-group" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
+                <div id="manual-location" style="display: none; margin-top: 20px; margin-bottom: 20px; padding: 16px; background: rgba(220, 53, 69, 0.05); border: 1px solid var(--error); border-radius: var(--radius);">
+                    <label for="input-manual" style="font-weight: 600; color: var(--error); display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 0.95rem;">
+                        <i class="ph-fill ph-warning-circle" style="font-size: 1.2rem;"></i>
+                        Sinal de GPS não encontrado. Digite o endereço manualmente:
+                    </label>
+                    <input type="text" id="input-manual" placeholder="Ex: Bairro Santana, Rua A, Nº 12..." style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; color: var(--text-primary); background: var(--surface);">
                 </div>
 
                 <label style="font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; display: block;">Observações Adicionais (Opcional):</label>
@@ -92,27 +96,32 @@
         // Objeto que guardará os dados da visita
         let visita = { status: null, focos: [], gps_disponivel: false };
 
-        // Lógica do Passo 1
+        // Lógica do Passo 1 (Atualizada para pular focos se a casa estiver fechada)
         window.avancarStatus = (elemento, status) => {
-            // Remove a seleção de todos os botões de status
             document.querySelectorAll('#step-status .chip').forEach(c => c.classList.remove('active'));
-            // Adiciona a seleção no botão clicado
             elemento.classList.add('active');
             visita.status = status;
             
-            // Aguarda 300ms para dar tempo de ver a animação de clique, e avança
             setTimeout(() => {
                 document.getElementById('step-status').classList.remove('active');
-                document.getElementById('step-focos').classList.add('active');
+                
+                if (status === 'fechada') {
+                    // Limpa quaisquer focos caso o agente tenha selecionado algo antes por engano
+                    visita.focos = []; 
+                    // Pula direto para a etapa de Localização
+                    document.getElementById('step-local').classList.add('active');
+                    obterLocalizacao();
+                } else {
+                    // Fluxo comum: vai para a tela de focos
+                    document.getElementById('step-focos').classList.add('active');
+                }
             }, 300);
         };
 
         // Lógica do Passo 2 (Múltipla Seleção)
         window.toggleFoco = (elemento, tipo) => {
-            // Alterna a classe 'active' para ligar/desligar visualmente
             elemento.classList.toggle('active');
             
-            // Atualiza o array de focos
             if(elemento.classList.contains('active')) {
                 visita.focos.push(tipo);
             } else {
@@ -120,14 +129,14 @@
             }
         };
 
-        // Lógica de avanço para o Passo 3
+        // Lógica de avanço manual para o Passo 3 (usada apenas no botão Continuar dos Focos)
         window.avancarLocalizacao = () => {
             document.getElementById('step-focos').classList.remove('active');
             document.getElementById('step-local').classList.add('active');
             obterLocalizacao();
         };
 
-        // Funções de GPS e Finalização (Mantidas iguais ao seu código original)
+        // Funções de GPS
         function obterLocalizacao() {
             if (!navigator.geolocation) return falhaGPS("Geolocalização não suportada no seu aparelho");
             

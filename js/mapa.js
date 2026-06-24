@@ -1,7 +1,7 @@
 // js/mapa.js - Gerenciamento do Mapa de Calor (Heatmap) do EcoVetor
 
 const CONFIG_MAPA = {
-    API_URL: "https://app-ads-back-end-wrlc.onrender.com"
+    API_URL: "https://app-ads-back-end-giq0.onrender.com"
 };
 
 let map;

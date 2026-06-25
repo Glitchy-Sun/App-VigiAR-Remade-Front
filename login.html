@@ -28,19 +28,14 @@
                 <input type="password" id="password" placeholder="Senha" required>
             </div>
 
-      <p style="color: var(--text-secondary); margin-bottom: 10px; font-weight: 600; font-size: 0.9rem; padding-left: 4px;">Entrar como:</p>
-<div class="role-selector-container">
-    <button type="button" class="role-btn btn-agente active" data-value="agente">
-        <i class="ph ph-shield-checkered"></i>
-        Agente de Saúde
-    </button>
-    <button type="button" class="role-btn btn-secretario" data-value="secretario">
-        <i class="ph ph-briefcase"></i>
-        Secretário
-    </button>
-</div>
-
-<input type="hidden" id="tipoConta" value="agente">
+            <div class="input-hud-group">
+                <i class="ph ph-users-three"></i>
+                <select id="tipoConta" required style="width:100%; background: transparent; border:none; color:inherit; outline:none; padding-left:5px;">
+                    <option value="" disabled selected hidden>Acessar como...</option>
+                    <option value="agente" style="background:#222; color:#fff;">Agente de Saúde</option>
+                    <option value="secretario" style="background:#222; color:#fff;">Secretário de Saúde</option>
+                </select>
+            </div>
 
             <div class="hud-options">
                 <label class="remember-me">
@@ -62,20 +57,25 @@
     <script type="module">
         import { login } from './js/auth.js';
 
-       // Lógica de alternância dos botões de tipo de conta
-const roleButtons = document.querySelectorAll('.role-btn');
-const tipoContaInput = document.getElementById('tipoConta');
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const matricula = document.getElementById('matricula').value;
+            const password = document.getElementById('password').value;
+            const tipo = document.getElementById('tipoConta').value; // Pegando o tipo!
 
-roleButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        // Remove a classe active de todos os botões
-        roleButtons.forEach(b => b.classList.remove('active'));
-        // Adiciona a classe active apenas no botão clicado
-        btn.classList.add('active');
-        // Atualiza o valor do input oculto para o formulário enviar corretamente
-        tipoContaInput.value = btn.dataset.value;
-    });
-});
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerText = "Entrando...";
+            btn.disabled = true;
+            
+            try {
+                // Passando os 3 parâmetros conforme seu auth.js exige
+                await login(matricula, password, tipo);
+            } catch(error) {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        });
     </script>
 </body>
 </html>

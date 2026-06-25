@@ -284,3 +284,54 @@ body.pendentes-dark-theme {
     color: var(--text-secondary) !important;
     opacity: 1 !important;
 }
+/* ============================================================\
+   SELEÇÃO DE PERFIL POR BOTÕES MODERNOS (LOGIN / CADASTRO)
+=============================================================== */
+.role-selector-container {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.role-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 12px;
+    background-color: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.role-btn i {
+    font-size: 1.6rem;
+}
+
+.role-btn:hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    color: var(--text-primary);
+}
+
+/* Estado Ativo - Agente de Saúde (Verde) */
+.role-btn.btn-agente.active {
+    background-color: #e6f4ea; 
+    border-color: #10b981;     /* var(--primary) */
+    color: #10b981;
+}
+
+/* Estado Ativo - Secretário (Azul) */
+.role-btn.btn-secretario.active {
+    background-color: #e8f0fe; 
+    border-color: #2563eb;     /* Azul moderno */
+    color: #2563eb;
+}

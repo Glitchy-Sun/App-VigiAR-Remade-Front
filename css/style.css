@@ -335,3 +335,18 @@ body.pendentes-dark-theme {
     border-color: #2563eb;     /* Azul moderno */
     color: #2563eb;
 }
+/* ============================================================
+   CORREÇÃO: INPUTS DO MODAL DE CONFIGURAÇÕES (TEXTO INVISÍVEL)
+=============================================================== */
+.modal-content input[type="text"],
+.modal-content input[type="password"],
+.modal-content input[type="file"] {
+    color: var(--text-primary) !important; /* Força o texto a ficar escuro */
+    background-color: var(--surface) !important; /* Fundo branco do input */
+    border: 1px solid var(--border) !important;
+}
+
+.modal-content input::placeholder {
+    color: var(--text-secondary) !important; /* Deixa a dica (placeholder) cinza escuro */
+    opacity: 1 !important;
+}
